@@ -1,0 +1,25 @@
+# ts
+**/node_modules/
+/webroot/scripts/*.js
+
+# vim
+**/*.swp
+
+# python
+**/*.pyc
+**/__pycache__/
+
+# jupyter
+**/.ipynb_checkpoints/
+
+# data
+data/
+!tests/data/
+*.csv
+
+# environment
+*.ftpconfig
+
+.idea
+/src/wandb
+*.html
