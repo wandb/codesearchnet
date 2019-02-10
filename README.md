@@ -1,3 +1,7 @@
+ # This is a staging repo to allow collaboration with OSS Partners.   
+  ### The contents of the master branch will be moved to `github/codenet` without any commit history prior to launch. 
+ 
+ 
  [![Build Status](https://dev.azure.com/hahusain/hahusain/_apis/build/status/ml-msr-github.semantic-search-research?branchName=master)](https://dev.azure.com/hahusain/hahusain/_build/latest?definitionId=1?branchName=master) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)  [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 
   # Overview
