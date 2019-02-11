@@ -138,3 +138,9 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
   **Note:** Options for `--model` are currently listed in `src/model_restore_helper.get_model_class_from_name`.	
   
   **Note:** Hyperparameters are specific to the respective model/encoder classes; a simple trick to discover them is to kick off a run without specifying hyperparameter choices, as that will print a list of all used hyperparameters with their default values (in JSON format).
+
+## License
+
+The Dockerfile and associated scripts and documentation in this project are released under the [MIT License](LICENSE).
+
+Container images built with this project include third party materials. See [THIRD_PARTY_NOTICE.md](THIRD_PARTY_NOTICE.md) for details.
