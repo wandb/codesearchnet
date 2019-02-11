@@ -14,6 +14,6 @@ Source for each package is available at `https://packages.ubuntu.com/source/{pac
 
 ## Python packages
 
-License and other copyright information for each package is included in the image under `/usr/local/lib/python3.6/site-packages/{package}`.
+License and other copyright information for each package is included in the image under `/usr/local/lib/python{version}/site-packages/{package}`.
 
 Additional information for each package is available at `https://pypi.org/project/{package}`.
