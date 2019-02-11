@@ -141,6 +141,6 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
 
 ## License
 
-The Dockerfile and associated scripts and documentation in this project are released under the [MIT License](LICENSE).
+This project is released under the [MIT License](LICENSE).
 
 Container images built with this project include third party materials. See [THIRD_PARTY_NOTICE.md](THIRD_PARTY_NOTICE.md) for details.
