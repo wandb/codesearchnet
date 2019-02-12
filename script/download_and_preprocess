@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e
+
+cd /home/codenet/script/
+python download_dataset.py ../data
+python download_auxiliary_dataset.py ../aux
+
+cd /home/codenet/src/dataextraction/JavaDataExtraction/
+mvn exec:java -DXmx8G -D"exec.mainClass"="javaextract.RosettaExtractor" -D"exec.args"="../../../aux/java_rosetta_code.csv ../../../aux/java_rosetta_data"
+
+cd /home/codenet/src/dataextraction/CSharpDataExtraction/
+dotnet run --project RosettaCodeTokenExtractor/RosettaCodeTokenExtractor.csproj ../../../aux/RosettaCodeData/Lang/C-sharp/ ../../../aux

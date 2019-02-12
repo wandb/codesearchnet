@@ -19,7 +19,7 @@ import pandas as pd
 if __name__ == '__main__':
     args = docopt(__doc__)
 
-    destination_dir = args['DESTINATION_DIR']
+    destination_dir = os.path.abspath(args['DESTINATION_DIR'])
     if not os.path.exists(destination_dir):
         os.makedirs(destination_dir)
 
