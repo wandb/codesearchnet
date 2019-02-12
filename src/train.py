@@ -120,7 +120,7 @@ def run(arguments, tag_in_vcs=False) -> None:
 
     # if you don't pass a save folder, save to azure.
     if not arguments['SAVE_FOLDER']:
-        arguments['SAVE_FOLDER'] = 'azure://semanticcodesearch/saved-models/'
+        arguments['SAVE_FOLDER'] =  str(dir_path.parent/'data/saved_models/')
 
     save_folder = arguments['SAVE_FOLDER']
 
