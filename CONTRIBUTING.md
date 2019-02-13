@@ -12,6 +12,16 @@ Contributions to this project are [released](https://help.github.com/articles/gi
 
 Please note that this project is released with a [Contributor Code of Conduct][code-of-conduct]. By participating in this project you agree to abide by its terms.
 
+## Scope
+
+We anticipate the the community will design custom architectures and use frameworks other than Tensorflow.  Furthermore, we anticipate that other datasets beyond the ones provided in this project might be useful.  It is not our intention to integrate all of best models and datasets into this repository as a superset of all available ideas.  Rather, we intend to provide baseline approaches and provide a central place of reference with links to related repositories in the community.  Therefore, we are accepting pull requests for the following items:
+
+- Bug fixes
+- Updates to documentation, including links to your project(s) where improvements to the baseline have been made.
+- Minor improvements to the code.
+
+Please open an issue if you are unsure regarding the best course of action.  
+
 ## Submitting a pull request
 
 0. [Fork][fork] and clone the repository
