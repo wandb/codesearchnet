@@ -30,9 +30,9 @@ Options:
     --azure-info PATH                Azure authentication information file (JSON). Used to load data from Azure storage.
     --sequential                     Do not parallelise data-loading. Simplifies debugging. [default: False]
     --debug                          Enable debug routines. [default: False]
-    --conala-data-path PATH          Path to Conala data set which is a directory filled with .json files. [default: azure://semanticcodesearch/conala-corpus/]
-    --staqc-data-path PATH           Path to StaQC data set which is a directory filled with .pickle files. [default: azure://semanticcodesearch/staqc-python-single-code-answer/]
-    --rosetta-code-data-path PATH    Path to Rosetta Code Python-Csharp data set which is a directory. [default: azure://semanticcodesearch/rosetta-code/]
+    --conala-data-path PATH          Path to Conala data set which is a directory filled with .json files.
+    --staqc-data-path PATH           Path to StaQC data set which is a directory filled with .pickle files.
+    --rosetta-code-data-path PATH    Path to Rosetta Code Python-Csharp data set which is a directory.
 """
 import json
 import os
@@ -106,10 +106,11 @@ def make_run_id(arguments: Dict[str, Any]) -> str:
 def run(arguments, tag_in_vcs=False) -> None:
     azure_info_path = arguments.get('--azure-info', None)
 
+    dir_path = Path(__file__).parent.absolute()
+    print(dir_path)
+
     # if you do not pass arguments for train/valid/test data default to files checked into repo.
     if not arguments['TRAIN_DATA_PATH']:
-        dir_path = Path(__file__).parent.absolute()
-        print(dir_path)
         arguments['TRAIN_DATA_PATH'] = str(dir_path/'data_dirs_train.txt')
         arguments['VALID_DATA_PATH'] = str(dir_path/'data_dirs_valid.txt')
         arguments['TEST_DATA_PATH'] = str(dir_path/'data_dirs_test.txt')
@@ -118,9 +119,19 @@ def run(arguments, tag_in_vcs=False) -> None:
     valid_data_dirs = test.expand_data_path(arguments['VALID_DATA_PATH'], azure_info_path)
     test_data_dirs = test.expand_data_path(arguments['TEST_DATA_PATH'], azure_info_path)
 
+    # supply defaults for the auxilary tests
+    if not arguments['--conala-data-path']:
+        arguments['--conala-data-path'] = str(dir_path.parent/'data/aux/conala/')
+
+    if not arguments['--staqc-data-path']:
+        arguments['--staqc-data-path'] = str(dir_path.parent/'data/aux/staqc/')
+    
+    if not arguments['--rosetta-code-data-path']:
+        arguments['--rosetta-code-data-path'] = str(dir_path.parent/'data/aux/rosetta/')
+    
     # if you don't pass a save folder, save to azure.
     if not arguments['SAVE_FOLDER']:
-        arguments['SAVE_FOLDER'] = 'azure://semanticcodesearch/saved-models/'
+        arguments['SAVE_FOLDER'] =  str(dir_path.parent/'data/saved_models/')
 
     save_folder = arguments['SAVE_FOLDER']
 

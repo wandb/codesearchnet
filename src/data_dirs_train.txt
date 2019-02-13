@@ -1,3 +1,3 @@
-azure://semanticcodesearch/pythondata/Processed_Data_v2/jsonl/train
-azure://semanticcodesearch/csharpdata/Processed_Data_v2/jsonl/train
-azure://semanticcodesearch/java-data/Processed_Data/jsonl/train
+../data/python/final/jsonl/train
+../data/csharp/final/jsonl/train
+../data/java/final/jsonl/train

@@ -1,3 +1,3 @@
-azure://semanticcodesearch/pythondata/Processed_Data_v2/jsonl/test
-azure://semanticcodesearch/csharpdata/Processed_Data_v2/jsonl/test
-azure://semanticcodesearch/java-data/Processed_Data/jsonl/test
+../data/python/final/jsonl/test
+../data/csharp/final/jsonl/test
+../data/java/final/jsonl/test
