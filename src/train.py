@@ -106,10 +106,11 @@ def make_run_id(arguments: Dict[str, Any]) -> str:
 def run(arguments, tag_in_vcs=False) -> None:
     azure_info_path = arguments.get('--azure-info', None)
 
+    dir_path = Path(__file__).parent.absolute()
+    print(dir_path)
+
     # if you do not pass arguments for train/valid/test data default to files checked into repo.
     if not arguments['TRAIN_DATA_PATH']:
-        dir_path = Path(__file__).parent.absolute()
-        print(dir_path)
         arguments['TRAIN_DATA_PATH'] = str(dir_path/'data_dirs_train.txt')
         arguments['VALID_DATA_PATH'] = str(dir_path/'data_dirs_valid.txt')
         arguments['TEST_DATA_PATH'] = str(dir_path/'data_dirs_test.txt')
