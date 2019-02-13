@@ -5,6 +5,7 @@
 [style]: https://www.python.org/dev/peps/pep-0008/
 [code-of-conduct]: CODE_OF_CONDUCT.md
 [azurepipelines]: azure-pipelines.yml
+[leaderboard]: LEADERBOARD.md
 
 Hi there! We're thrilled that you'd like to contribute to this project. Your help is essential for keeping it great.
 
@@ -17,6 +18,7 @@ Please note that this project is released with a [Contributor Code of Conduct][c
 We anticipate the the community will design custom architectures and use frameworks other than Tensorflow.  Furthermore, we anticipate that other datasets beyond the ones provided in this project might be useful.  It is not our intention to integrate all of best models and datasets into this repository as a superset of all available ideas.  Rather, we intend to provide baseline approaches and provide a central place of reference with links to related repositories in the community.  Therefore, we are accepting pull requests for the following items:
 
 - Bug fixes
+- Submissions to the leaderboard.  See [this link][leaderboard] for more information.
 - Updates to documentation, including links to your project(s) where improvements to the baseline have been made.
 - Minor improvements to the code.
 
