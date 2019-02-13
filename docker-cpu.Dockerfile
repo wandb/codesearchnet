@@ -1,5 +1,5 @@
 # changes to this image can be made here: https://github.com/ml-msr-github/docker-codenet/
-FROM github/codenet-cpu
+FROM github/codenet:cpu
 
 RUN pip --no-cache-dir install --upgrade \
     ipdb
