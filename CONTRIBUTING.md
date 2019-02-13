@@ -1,9 +1,10 @@
 ## Contributing
 
-[fork]: https://github.com/github/REPO/fork
-[pr]: https://github.com/github/REPO/compare
-[style]: https://github.com/styleguide/ruby
+[fork]: https://help.github.com/articles/fork-a-repo/
+[pr]: https://help.github.com/articles/creating-a-pull-request/
+[style]: https://www.python.org/dev/peps/pep-0008/
 [code-of-conduct]: CODE_OF_CONDUCT.md
+[azurepipelines]: azure-pipelines.yml
 
 Hi there! We're thrilled that you'd like to contribute to this project. Your help is essential for keeping it great.
 
@@ -15,7 +16,7 @@ Please note that this project is released with a [Contributor Code of Conduct][c
 
 0. [Fork][fork] and clone the repository
 0. Configure and install the dependencies: `script/bootstrap`
-0. Make sure the tests pass on your machine: `rake`
+0. Make sure the tests pass on your machine: See [azure-pipelines.yml][azurepipelines] to see tests we are currently running.
 0. Create a new branch: `git checkout -b my-branch-name`
 0. Make your change, add tests, and make sure the tests still pass
 0. Push to your fork and [submit a pull request][pr]
