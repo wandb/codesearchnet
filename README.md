@@ -6,7 +6,7 @@
 
   # Overview
 
-  **Semantic-Code-Search** is a deep-learning based framework built on [TensorFlow](https://github.com/tensorflow/tensorflow) that we use to research the problem of code retrieval using natural language.  This research is a continuation of some ideas presented [here](https://githubengineering.com/towards-natural-language-semantic-code-search/) and is a joint collaboration between GitHub and the [Deep Program Understanding](https://www.microsoft.com/en-us/research/project/program/) group at [Microsoft Research - Cambridge](https://www.microsoft.com/en-us/research/lab/microsoft-research-cambridge/).
+  **CodeNet** is a deep-learning based framework built on [TensorFlow](https://github.com/tensorflow/tensorflow) that we use to research the problem of code retrieval using natural language.  This research is a continuation of some ideas presented [here](https://githubengineering.com/towards-natural-language-semantic-code-search/) and is a joint collaboration between GitHub and the [Deep Program Understanding](https://www.microsoft.com/en-us/research/project/program/) group at [Microsoft Research - Cambridge](https://www.microsoft.com/en-us/research/lab/microsoft-research-cambridge/).
 
 
   The goals of this repository are to provide the community with the following:
@@ -87,7 +87,7 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
     
      The cache location is used to cache training/test data and can grow to ~3GB) and should be a location on a local disk. For reference, here are instructions on how to obtain a [SAS token](https://docs.microsoft.com/en-us/azure/storage/common/storage-dotnet-shared-access-signature-part-1)
  
-  3. Make sure you can submit data to the [wandb](https://docs.wandb.com/docs/started.html) GitHub private team. To check, you can visit https://app.wandb.ai/github, which should only be visible if you are a team member.
+  3. Setup [WandB](https://docs.wandb.com/docs/started.html) per the instructions below if you would like to share your results on this platform.
  
   ## Running The Code	
  
