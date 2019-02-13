@@ -87,7 +87,7 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
     
      The cache location is used to cache training/test data and can grow to ~3GB) and should be a location on a local disk. For reference, here are instructions on how to obtain a [SAS token](https://docs.microsoft.com/en-us/azure/storage/common/storage-dotnet-shared-access-signature-part-1)
  
-  3. Setup [WandB](https://docs.wandb.com/docs/started.html) per the instructions below if you would like to share your results on this platform.
+  3. Setup [WandB](https://docs.wandb.com/docs/started.html) per the instructions below if you would like to share your results on their platform.  This is a recommended step as they are hosting the leaderboard for this task.
  
   ## Running The Code	
  
