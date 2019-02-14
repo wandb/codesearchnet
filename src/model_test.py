@@ -199,8 +199,8 @@ def get_conala_dataset(path: RichPath) -> List[Dict[str, Any]]:
 
 
 def get_staqc_dataset(path: RichPath) -> List[Dict[str, Any]]:
-    codes = path.get_filtered_files_in_dir('*code.pickle')[0].read_as_pickle()
-    titles = path.get_filtered_files_in_dir('*title.pickle')[0].read_as_pickle()
+    codes = path.get_filtered_files_in_dir('python*qid_by*code.pickle')[0].read_as_pickle()
+    titles = path.get_filtered_files_in_dir('python*qid_by*title.pickle')[0].read_as_pickle()
     data = chain([{'code': code,
                    'code_tokens': tokenize_python_from_string(code, func_only=False).code_tokens,
                    'docstring': titles[_id],
@@ -349,7 +349,7 @@ def compute_evaluation_metrics(model_path: RichPath, arguments, azure_info_path:
         # run the test procedure on the validation set (with same batch size as test, so that MRR is comparable)
         tester.evaluate(get_dataset_from(valid_data_dirs), f'Validation-{language_name}',
                         filter_language=language_name if filter_language else None)
-    
+
     if 'python' in tester.model.per_code_language_metadata:
         # run evaluation on Conala dataset
         # https://conala-corpus.github.io/
