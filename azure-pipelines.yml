@@ -5,27 +5,27 @@ pool:
   vmImage: 'ubuntu-16.04'
 
 steps:
-- script: docker build -t quicktest -f docker-cpu.Dockerfile .
+- script: docker build -t integration_test -f docker-cpu.Dockerfile .
   displayName: 'docker build'
   continueOnError: false
 
-- script:  docker run quicktest mypy --ignore-missing-imports --follow-imports skip /src/train.py /src/model_test.py /src/models/model.py /src/dataextraction/python/parse_python_data.py
+- script:  docker run integration_test mypy --ignore-missing-imports --follow-imports skip /src/train.py /src/model_test.py /src/models/model.py /src/dataextraction/python/parse_python_data.py
   displayName: 'mypy type checking'
   continueOnError: false
 
 # integration tests
-- script: docker run quicktest python train.py /src /tests/data/data_train.txt /tests/data/data_train.txt /tests/data/data_train.txt --conala-data-path /tests/data/conala/ --staqc-data-path /tests/data/staqc/ --rosetta-code-data-path /tests/data/rosettacode --dryrun --max-num-epochs 1 --model neuralbow
+- script: docker run integration_test python train.py /src /tests/data/data_train.txt /tests/data/data_train.txt /tests/data/data_train.txt --conala-data-path /tests/data/conala/ --staqc-data-path /tests/data/staqc/ --rosetta-code-data-path /tests/data/rosetta --dryrun --max-num-epochs 1 --model neuralbow
   displayName: 'integration test: neuralbow, all languages'
   continueOnError: false
 
-- script: docker run quicktest python train.py /src /tests/data/data_train.txt /tests/data/data_train.txt /tests/data/data_train.txt --conala-data-path /tests/data/conala/ --staqc-data-path /tests/data/staqc/ --rosetta-code-data-path /tests/data/rosettacode --dryrun --max-num-epochs 1 --model 1dcnn
+- script: docker run integration_test python train.py /src /tests/data/data_train.txt /tests/data/data_train.txt /tests/data/data_train.txt --conala-data-path /tests/data/conala/ --staqc-data-path /tests/data/staqc/ --rosetta-code-data-path /tests/data/rosetta --dryrun --max-num-epochs 1 --model 1dcnn
   displayName: 'integration test: 1dcnn, all languages'
   continueOnError: false
 
-- script: docker run quicktest python train.py /src /tests/data/data_train.txt /tests/data/data_train.txt /tests/data/data_train.txt --conala-data-path /tests/data/conala/ --staqc-data-path /tests/data/staqc/ --rosetta-code-data-path /tests/data/rosettacode --dryrun --max-num-epochs 1 --model selfatt --hypers-override "{\"batch_size\":64}"
+- script: docker run integration_test python train.py /src /tests/data/data_train.txt /tests/data/data_train.txt /tests/data/data_train.txt --conala-data-path /tests/data/conala/ --staqc-data-path /tests/data/staqc/ --rosetta-code-data-path /tests/data/rosetta --dryrun --max-num-epochs 1 --model selfatt --hypers-override "{\"batch_size\":64}"
   displayName: 'integration test: selfattn, all languages'
   continueOnError: false
 
-- script: docker run quicktest python train.py /src /tests/data/data_train.txt /tests/data/data_train.txt /tests/data/data_train.txt --conala-data-path /tests/data/conala/ --staqc-data-path /tests/data/staqc/ --rosetta-code-data-path /tests/data/rosettacode --dryrun --max-num-epochs 1 --model rnn
+- script: docker run integration_test python train.py /src /tests/data/data_train.txt /tests/data/data_train.txt /tests/data/data_train.txt --conala-data-path /tests/data/conala/ --staqc-data-path /tests/data/staqc/ --rosetta-code-data-path /tests/data/rosetta --dryrun --max-num-epochs 1 --model rnn
   displayName: 'integration test: rnn, all languages'
   continueOnError: false
