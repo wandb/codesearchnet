@@ -3,4 +3,4 @@
 set -e
 cd $(dirname "$0")/..
 
-docker build -f preprocessing.Dockerfile -t preprocessing .
+docker build -f docker/preprocessing.Dockerfile -t preprocessing .
