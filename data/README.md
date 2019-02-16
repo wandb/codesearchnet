@@ -41,3 +41,7 @@ After downloading the data, the directory structure will look like this:
 - `{csharp,java,python}\final\DataFrame`: contains pandas DataFrames with data collected into a tabular format to facilitate exploratory data analysis and summary statistics.  Each language has 4 dataframes corresponding to {holdout, test, train, valid} partitions. 
 - `aux\{conala,rosetta,staqc}`: these files correspond to the auxilary tests.  Please see the README at the root of the repository for more background on the auxilary tests.
 - `saved_models`: this is the default destination where your models will be saved if you do not supply a destination.
+
+## Data Format
+
+See [this](docs/DATA_FORMAT.md) for documentation and an example of how the data is stored.

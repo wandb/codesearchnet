@@ -5,7 +5,7 @@ pool:
   vmImage: 'ubuntu-16.04'
 
 steps:
-- script: docker build -t integration_test -f docker-cpu.Dockerfile .
+- script: docker build -t integration_test -f docker/docker-cpu.Dockerfile .
   displayName: 'docker build'
   continueOnError: false
 

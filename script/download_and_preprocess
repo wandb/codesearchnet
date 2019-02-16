@@ -4,16 +4,16 @@ set -e
 
 cd /home/codenet/script/
 python download_dataset.py ../data
-python download_auxiliary_dataset.py ../aux
+python download_auxiliary_dataset.py ..data/aux
 
 cd /home/codenet/src/dataextraction/JavaDataExtraction/
-mvn exec:java -DXmx8G -D"exec.mainClass"="javaextract.RosettaExtractor" -D"exec.args"="../../../aux/java_rosetta_code.csv ../../../aux/rosetta/java_rosetta_data"
+mvn exec:java -DXmx8G -D"exec.mainClass"="javaextract.RosettaExtractor" -D"exec.args"="../../../data/aux/java_rosetta_code.csv ../../../data/aux/rosetta/java_rosetta_data"
 
 cd /home/codenet/src/dataextraction/CSharpDataExtraction/
-dotnet run --project RosettaCodeTokenExtractor/RosettaCodeTokenExtractor.csproj ../../../aux/RosettaCodeData/Lang/C-sharp/ ../../../aux/rosetta
+dotnet run --project RosettaCodeTokenExtractor/RosettaCodeTokenExtractor.csproj ../../../data/aux/RosettaCodeData/Lang/C-sharp/ ../../../data/aux/rosetta
 
-mkdir /home/codenet/aux/conala
-mkdir /home/codenet/aux/staqc
+mkdir /home/codenet/data/aux/conala
+mkdir /home/codenet/data/aux/staqc
 
-cp /home/codenet/aux/conala-corpus/*.json /home/codenet/aux/conala/.
-cp /home/codenet/aux/StackOverflow-Question-Code-Dataset/annotation_tool/data/code_solution_labeled_data/source/python*qid_by*.pickle /home/codenet/aux/staqc/.
+cp /home/codenet/data/aux/conala-corpus/*.json /home/codenet/data/aux/conala/.
+cp /home/codenet/data/aux/StackOverflow-Question-Code-Dataset/annotation_tool/data/code_solution_labeled_data/source/python*qid_by*.pickle /home/codenet/data/aux/staqc/.
