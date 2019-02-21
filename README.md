@@ -14,7 +14,7 @@
 
 More context regarding the motivation for this problem is in our blog post [TODO here](#TODO-TODO).
 
-Our intention is not to maintain an open-source deep learning framework, but instead present an interesting machine learning problem and provide data and code so our results are reproduceable.
+Our intention is not to maintain an open-source deep learning framework, but instead present an interesting machine learning problem and provide data and code so our results are reproducible.
 
  ## General Architecture
 
@@ -44,7 +44,7 @@ These tests use datasets that might more closely resemble natural language searc
 
 ### Other Auxilary Tests:
 
-  1. **Function Name Prediction:**  we use our primary dataset and construct a task that attempts that attempts to retrieve the body of a function or method given the function or method name.
+  1. **Function Name Prediction:**  we use our primary dataset and construct a task that attempts to retrieve the body of a function or method given the function or method name.
   2. [Rosetta Code](http://www.rosettacode.org/wiki/Rosetta_Code): We use data from this site to construct several parallel corpora that has pairs of code that accomplish the same task from the python, csharp, and java programming languages.  We use this parallel corpus to see if we can retrieve code in a different programming language that is the same to the one given.  For example, given a snippet of python code, we evaluate how well the representations learned by our model can retrieve code in java or csharp that accomplish the same task.
 
 ##  Leaderboard
@@ -59,7 +59,7 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
 
  We encourage the community to beat these baselines and submit a PR including your new benchmark in the above leaderboard. Please see these [instructions for submitting to the leaderboard](src/docs/LEADERBOARD.md).  Some requirements for submission to this leaderboard:  
 
-  - results must be reproduceable with clear instructions.
+  - results must be reproducible with clear instructions.
   - code must be open sourced and clearly licensed.
   - model must demonstrate an improvement on at least one of the auxilary tests.
 
@@ -78,7 +78,7 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
  
   ### Get Data	
  
- There are several optoins for getting data.  
+ There are several options for getting data.  
  
  1. Extract the data from source and parse, annotate, and dedup the data.  To do this, see the [dataextraction README](src/dataextraction/README.md).
 
