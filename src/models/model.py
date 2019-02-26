@@ -29,7 +29,7 @@ class RepresentationType(Enum):
 def get_data_files_from_directory(data_dirs: List[RichPath],
                                   max_num_files: Optional[int] = None,
                                   max_files_per_dir: Optional[int] = None) -> List[RichPath]:
-    files = []
+    files = []  # type: List[str]
     for data_dir in data_dirs:
         dir_files = data_dir.get_filtered_files_in_dir('*.jsonl.gz')
         if max_files_per_dir:
