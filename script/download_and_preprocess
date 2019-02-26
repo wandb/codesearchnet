@@ -6,9 +6,9 @@ cd /home/codenet/script/
 python download_dataset.py ../data
 python download_auxiliary_dataset.py ../data/aux
 
-mkdir /home/codenet/data/aux/rosetta
-mkdir /home/codenet/data/aux/conala
-mkdir /home/codenet/data/aux/staqc
+mkdir -p /home/codenet/data/aux/rosetta
+mkdir -p /home/codenet/data/aux/conala
+mkdir -p /home/codenet/data/aux/staqc
 
 cd /home/codenet/src/dataextraction/JavaDataExtraction/
 mvn package
