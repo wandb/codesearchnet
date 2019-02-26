@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     os.chdir(destination_dir)
     call(['wget', 'http://www.phontron.com/download/conala-corpus-v1.1.zip', '-P', destination_dir, '-O', 'conala-corpus-v1.1.zip'])
-    call(['unzip', 'conala-corpus-v1.1.zip'])
+    call(['unzip', '-o', 'conala-corpus-v1.1.zip'])
     call(['git', 'clone', '--depth=1', 'https://github.com/LittleYUYU/StackOverflow-Question-Code-Dataset.git'])
     call(['git', 'clone', '--depth=1', 'https://github.com/acmeism/RosettaCodeData.git'])
 

@@ -11,6 +11,7 @@ mkdir /home/codenet/data/aux/conala
 mkdir /home/codenet/data/aux/staqc
 
 cd /home/codenet/src/dataextraction/JavaDataExtraction/
+mvn package
 mvn exec:java -DXmx8G -D"exec.mainClass"="javaextract.RosettaExtractor" -D"exec.args"="../../../data/aux/java_rosetta_code.csv ../../../data/aux/rosetta/java_rosetta_data"
 
 cd /home/codenet/src/dataextraction/CSharpDataExtraction/
