@@ -18,7 +18,6 @@ azure://semanticcodesearch/csharpdata/split/csharpCrawl-train
 Options:
     -h --help                        Show this screen.
     --max-num-epochs EPOCHS          The maximum number of epochs to run [default: 300]
-    --max-num-files INT              Number of files to load.
     --max-files-per-dir INT          Number of files per directory to load.
     --hypers-override HYPERS         JSON dictionary overriding hyperparameter values.
     --hypers-override-file FILE      JSON file overriding hyperparameter values.
@@ -60,7 +59,6 @@ def run_train(model_class: Type[Model],
               azure_info_path: Optional[str],
               run_name: str,
               quiet: bool = False,
-              max_num_files: Optional[int] = None,
               max_files_per_dir: Optional[int] = None,
               parallelize: bool = True) \
         -> RichPath:
@@ -72,7 +70,7 @@ def run_train(model_class: Type[Model],
                                                                                              str(hyperparameters)))
         resume = True
     else:
-        model.load_metadata(train_data_dirs, max_num_files=max_num_files, max_files_per_dir=max_files_per_dir, parallelize=parallelize)
+        model.load_metadata(train_data_dirs, max_files_per_dir=max_files_per_dir, parallelize=parallelize)
         model.make_model(is_train=True)
         model.train_log("Starting training run %s of model %s with following hypers:\n%s" % (run_name,
                                                                                              model.__class__.__name__,
@@ -86,8 +84,8 @@ def run_train(model_class: Type[Model],
             f.write(os.path.basename(model.model_save_path))
     
     wandb.config.update(model.hyperparameters)
-    train_data = model.load_data_from_dirs(train_data_dirs, is_test=False, max_num_files=max_num_files, max_files_per_dir=max_files_per_dir, parallelize=parallelize)
-    valid_data = model.load_data_from_dirs(valid_data_dirs, is_test=False, max_num_files=max_num_files, max_files_per_dir=max_files_per_dir, parallelize=parallelize)
+    train_data = model.load_data_from_dirs(train_data_dirs, is_test=False, max_files_per_dir=max_files_per_dir, parallelize=parallelize)
+    valid_data = model.load_data_from_dirs(valid_data_dirs, is_test=False, max_files_per_dir=max_files_per_dir, parallelize=parallelize)
     model_path = model.train(train_data, valid_data, azure_info_path, quiet=quiet, resume=resume)
     return model_path
 
@@ -176,14 +174,12 @@ def run(arguments, tag_in_vcs=False) -> None:
 
     model_path = run_train(model_class, train_data_dirs, valid_data_dirs, save_folder, hyperparameters,
                            azure_info_path, run_name, arguments['--quiet'],
-                           max_num_files=arguments.get('--max-num-files'),
                            max_files_per_dir=arguments.get('--max-files-per-dir'),
                            parallelize=not(arguments['--sequential']))
 
     wandb.config['best_model_path'] = str(model_path)
 
     compute_evaluation_metrics(model_path, arguments, azure_info_path, valid_data_dirs, test_data_dirs,
-            max_num_files=arguments.get('--max-num-files'),
             max_files_per_dir=arguments.get('--max-files-per-dir'))
 
 

@@ -315,9 +315,10 @@ def evaluate_rosetta_code(model, source_langauge: str,
     return eval_mrr
 
 
-def get_dataset_from(data_dirs: List[RichPath], use_func_names: bool=False, max_num_files: Optional[int] = None,
-                                  max_files_per_dir: Optional[int] = None) -> List[Dict[str, Any]]:
-    data_files = sorted(get_data_files_from_directory(data_dirs, max_num_files, max_files_per_dir))
+def get_dataset_from(data_dirs: List[RichPath], 
+                     use_func_names: bool=False, 
+                     max_files_per_dir: Optional[int] = None) -> List[Dict[str, Any]]:
+    data_files = sorted(get_data_files_from_directory(data_dirs, max_files_per_dir))
     data = list(chain(*chain(list(f.read_by_file_suffix()) for f in data_files)))
 
     if use_func_names:
@@ -332,12 +333,15 @@ def get_dataset_from(data_dirs: List[RichPath], use_func_names: bool=False, max_
     return data
 
 
-def compute_evaluation_metrics(model_path: RichPath, arguments, azure_info_path: str,
-                               valid_data_dirs: List[RichPath], test_data_dirs: List[RichPath],
-                               max_num_files: Optional[int] = None, max_files_per_dir: Optional[int] = None):
+def compute_evaluation_metrics(model_path: RichPath, arguments, 
+                               azure_info_path: str,
+                               valid_data_dirs: List[RichPath], 
+                               test_data_dirs: List[RichPath],
+                               max_files_per_dir: Optional[int] = None):
+
     tester = MrrSearchTester(model_path, test_batch_size=int(arguments['--test-batch-size']),
                                   distance_metric=arguments['--distance-metric'])
-    test_data = get_dataset_from(test_data_dirs, max_num_files=max_num_files, max_files_per_dir=max_files_per_dir)
+    test_data = get_dataset_from(test_data_dirs, max_files_per_dir=max_files_per_dir)
     # Get all languages in test_data
     dataset_languages = set(d['language'] for d in test_data)
     evaluation_sets = list((l, True) for l in dataset_languages)  # type: List[Tuple[str, bool]]
@@ -349,11 +353,11 @@ def compute_evaluation_metrics(model_path: RichPath, arguments, azure_info_path:
         tester.evaluate(test_data, f'Test-{language_name}', filter_language=language_name if filter_language else None)
 
         # run test using the function name as the query
-        tester.evaluate(get_dataset_from(test_data_dirs, use_func_names=True, max_num_files=max_num_files, max_files_per_dir=max_files_per_dir), f'FuncNameTest-{language_name}',
+        tester.evaluate(get_dataset_from(test_data_dirs, use_func_names=True, max_files_per_dir=max_files_per_dir), f'FuncNameTest-{language_name}',
                         filter_language=language_name if filter_language else None)
 
         # run the test procedure on the validation set (with same batch size as test, so that MRR is comparable)
-        tester.evaluate(get_dataset_from(valid_data_dirs, max_num_files=max_num_files, max_files_per_dir=max_files_per_dir), f'Validation-{language_name}',
+        tester.evaluate(get_dataset_from(valid_data_dirs, max_files_per_dir=max_files_per_dir), f'Validation-{language_name}',
                         filter_language=language_name if filter_language else None)
 
     if 'python' in tester.model.per_code_language_metadata:

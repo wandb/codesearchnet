@@ -27,7 +27,6 @@ class RepresentationType(Enum):
 
 
 def get_data_files_from_directory(data_dirs: List[RichPath],
-                                  max_num_files: Optional[int] = None,
                                   max_files_per_dir: Optional[int] = None) -> List[RichPath]:
     files = []  # type: List[str]
     for data_dir in data_dirs:
@@ -35,8 +34,7 @@ def get_data_files_from_directory(data_dirs: List[RichPath],
         if max_files_per_dir:
             dir_files = sorted(dir_files)[:int(max_files_per_dir)]
         files += dir_files
-    if max_num_files:
-        files = sorted(files)[:int(max_num_files)]
+
     np.random.shuffle(files)  # This avoids having large_file_0, large_file_1, ... subsequences
     return files
 
@@ -393,7 +391,7 @@ class Model(ABC):
             pruned_clipped_gradients.append((gradient, trainable_var))
         self.ops['train_step'] = optimizer.apply_gradients(pruned_clipped_gradients)
 
-    def load_metadata(self, data_dirs: List[RichPath], max_num_files: Optional[int] = None, max_files_per_dir: Optional[int] = None, parallelize: bool = True) -> None:
+    def load_metadata(self, data_dirs: List[RichPath], max_files_per_dir: Optional[int] = None, parallelize: bool = True) -> None:
         raw_query_metadata_list = []
         raw_code_language_metadata_lists: DefaultDict[str, List] = defaultdict(list)
 
@@ -421,12 +419,12 @@ class Model(ABC):
             pass
 
         if parallelize:
-            run_jobs_in_parallel(get_data_files_from_directory(data_dirs, max_num_files, max_files_per_dir),
+            run_jobs_in_parallel(get_data_files_from_directory(data_dirs, max_files_per_dir),
                                  metadata_parser_fn,
                                  received_result_callback,
                                  finished_callback)
         else:
-            for (idx, file) in enumerate(get_data_files_from_directory(data_dirs, max_num_files, max_files_per_dir)):
+            for (idx, file) in enumerate(get_data_files_from_directory(data_dirs, max_files_per_dir)):
                 for res in metadata_parser_fn(idx, file):
                     received_result_callback(res)
 
@@ -450,10 +448,11 @@ class Model(ABC):
         self.__query_metadata = saved_data['query_metadata']
         self.__per_code_language_metadata = saved_data['per_code_language_metadata']
 
-    def load_data_from_dirs(self, data_dirs: List[RichPath], is_test: bool, max_num_files: Optional[int] = None,
+    def load_data_from_dirs(self, data_dirs: List[RichPath], is_test: bool,
                             max_files_per_dir: Optional[int] = None,
-                            return_num_original_samples: bool = False, parallelize: bool = True) -> Union[LoadedSamples, Tuple[LoadedSamples, int]]:
-        return self.load_data_from_files(data_files=list(get_data_files_from_directory(data_dirs, max_num_files, max_files_per_dir)),
+                            return_num_original_samples: bool = False, 
+                            parallelize: bool = True) -> Union[LoadedSamples, Tuple[LoadedSamples, int]]:
+        return self.load_data_from_files(data_files=list(get_data_files_from_directory(data_dirs, max_files_per_dir)),
                                          is_test=is_test,
                                          return_num_original_samples=return_num_original_samples,
                                          parallelize=parallelize)
