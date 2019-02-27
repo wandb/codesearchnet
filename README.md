@@ -14,13 +14,13 @@
 
 More context regarding the motivation for this problem is in our blog post [TODO here](#TODO-TODO).
 
-Our intention is not to maintain an open-source deep learning framework, but instead present an interesting machine learning problem and provide data and code so our results are reproducible.
+Our intent is not to maintain an open-source deep learning framework, but rather to present an interesting machine learning problem and provide data and code so our results are reproducible.
 
  ## General Architecture
 
  ![alt text](images/architecture.png "Architecture")
   
- - This model ingests a parallel corpus of (`comments`, `code`) and learns to retrieve a code snippet given a natural language query.  Specifically, `comments` are top-level function and method comments (ex: in python called docstrings), and `code` is either an entire function or method. Throughout this repo, we refer to the terms docstring and query interchangibly. 
+ - This model ingests a parallel corpus of (`comments`, `code`) and learns to retrieve a code snippet given a natural language query.  Specifically, `comments` are top-level function and method comments (ex: in Python called docstrings), and `code` is either an entire function or method. Throughout this repo, we refer to the terms docstring and query interchangibly. 
  - The query has a single encoder, whereas each programming language has its own encoder (our initial release has three languages: Python, Java, and C#).
  - Encoders available are: Neural-Bag-Of-Words, RNN, 1D-CNN, Self-Attention (BERT), and a 1D-CNN+Self-Attention Hybrid.
 
@@ -29,23 +29,23 @@ Our intention is not to maintain an open-source deep learning framework, but ins
  The metric we use for evaluation is [Mean Reciprocal Rank](https://en.wikipedia.org/wiki/Mean_reciprocal_rank).
 
  ## Primary Dataset
- Since we do not have a labeled dataset for semantic code search, we are using a proxy dataset that is a parallel corpus of (`comments`, `code`) to force code and natural language into the same vector space.  We group paritition the data into train/validation/test splits such that code from the same repository can only exist in one partition.
+ Since we do not have a labeled dataset for semantic code search, we are using a proxy dataset that is a parallel corpus of (`comments`, `code`) to force code and natural language into the same vector space.  We paritition the data into train/validation/test splits such that code from the same repository can only exist in one partition.
  
  ## Auxilary Tests
- In order to guide our progress we also evaluate our model on external datasets that more closely resemble semantic search, as well as other tasks that test our ability to learn representations of code.  Throughout the documentation, we refer to these as **Auxilary tests**.  An outline of these these tests are below:
+ In order to guide our progress we also evaluate our model on external datasets that more closely resemble semantic search, as well as other tasks that test our ability to learn generalized representations of code.  Throughout the documentation, we refer to these as **Auxilary tests**.  An outline of these these tests are below:
 
 ### Search Auxilary Tests
 These tests use datasets that might more closely resemble natural language searches for code.
 
-1. [CoNala](https://conala-corpus.github.io/): curated stack overflow data that is human-labeled with intent.  From this we construct a parallel corpus of (code, intent).
+1. [CoNala](https://conala-corpus.github.io/): Curated Stack Overflow data that is human-labeled with intent.  From this we construct a parallel corpus of (code, intent).
 
-2. [StaQC](http://web.cse.ohio-state.edu/~sun.397/docs/StaQC-www18.pdf): another dataset manually curated from stack overflow with (code, question) pairs.
+2. [StaQC](http://web.cse.ohio-state.edu/~sun.397/docs/StaQC-www18.pdf): Another dataset manually curated from Stack Overflow with (code, question) pairs.
 
 
 ### Other Auxilary Tests:
 
   1. **Function Name Prediction:**  we use our primary dataset and construct a task that attempts to retrieve the body of a function or method given the function or method name.
-  2. [Rosetta Code](http://www.rosettacode.org/wiki/Rosetta_Code): We use data from this site to construct several parallel corpora that has pairs of code that accomplish the same task from the python, csharp, and java programming languages.  We use this parallel corpus to see if we can retrieve code in a different programming language that is the same to the one given.  For example, given a snippet of python code, we evaluate how well the representations learned by our model can retrieve code in java or csharp that accomplish the same task.
+  2. [Rosetta Code](http://www.rosettacode.org/wiki/Rosetta_Code): We use data from this site to construct several parallel corpora containing pairs of code that accomplish the same task from the Python, C#, and Java programming languages.  We use this parallel corpus to see if we can retrieve code in a different programming language that matches the given one.  For example, given a snippet of Python code, we evaluate how well the representations learned by our model can retrieve code in Java or C# that accomplishes the same task.
 
 ##  Leaderboard
 
@@ -59,26 +59,26 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
 
  We encourage the community to beat these baselines and submit a PR including your new benchmark in the above leaderboard. Please see these [instructions for submitting to the leaderboard](src/docs/LEADERBOARD.md).  Some requirements for submission to this leaderboard:  
 
-  - results must be reproducible with clear instructions.
-  - code must be open sourced and clearly licensed.
-  - model must demonstrate an improvement on at least one of the auxilary tests.
+  - Results must be reproducible with clear instructions.
+  - Code must be open sourced and clearly licensed.
+  - Model must demonstrate an improvement on at least one of the auxilary tests.
 
  You may notice that we have provided links in the **Notes** section of the leaderboard to a dashboard that shows detailed logging of our training and evaluation metrics, as well as  model artifacts for increased transperency.  We are utlizing [Weights & Biases](https://www.wandb.com/) (WandB), which is free for open-source projects.  While logging your models on this system is optional, we encourage participants who want to be included on this leaderboard to provide as much transperency as possible.  More instructions on how to enable **WandB** are below.
 
 
   ## Setup Notes
  
-  1. Due to the complexity of installing all dependencies we prepared docker containers to run this code.  To get started, run the shell script `script/bootstrap`.  This will build a docker container that can be used to fetch the data.
+  1. Due to the complexity of installing all dependencies, we prepared Docker containers to run this code.  To get started, run the shell script `script/bootstrap`.  This will build a Docker container that can be used to fetch the data.
 
-  2. Run the shell script `script/setup`. This downloads the primary and auxilary datasets described above. The data is downloaded into the `data/` folder and will result in a directory structure described [here](data/README.md).
+  2. Run the shell script `script/setup`. This downloads the primary and auxilary datasets described above. The data is downloaded into the `data/` folder and will result in the directory structure described [here](data/README.md).
  
   3. Setup [WandB](https://docs.wandb.com/docs/started.html) per the instructions below if you would like to share your results on their platform.  This is a recommended step as they are hosting the leaderboard for this task.
  
   ## Running The Code	
  
-  ### Get Data	
+  ### Data Acquisition
  
- There are several options for getting data.  
+ There are several options for acquiring the data.  
  
  1. Extract the data from source and parse, annotate, and dedup the data.  To do this, see the [dataextraction README](src/dataextraction/README.md).
 
@@ -86,21 +86,21 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
 
     Most people will want to use option 2 as parsing all of the code from source can require a considerable amount of computation.  However, there may be an opportunity to parse, clean and transform the original data in new ways that can increase performance.  If you have run the setup steps above you will already have the pre-processed files, and nothing more needs to be done.  You can read more about the format of the pre-processed data [here](src/docs/DATA_FORMAT.md).
  
-  ### Optional: Setup Wandb	
+  ### Optional: WandB Setup
  
- You need to initialize wandb:
+ You need to initialize WandB:
  
    1. Navigate to the `/src` directory in this repository.
  
-   2. If its your first time using wandb on a machine you will need to login:	
+   2. If it's your first time using WandB on a machine you will need to login:	
 
       ```
       $ wandb login
       ```
 
-   3. You will be asked for your api key, which is shown on your [wandb profile page](https://app.wandb.ai/profile).
+   3. You will be asked for your api key, which is shown on your [WandB profile page](https://app.wandb.ai/profile).
  
-   4. Finally, initialize your wandb environment:	
+   4. Finally, initialize your WandB environment:	
 
       ```
       $ wandb init
@@ -135,7 +135,7 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
 
     The above command overrides the default locations for saving the model to `trained_models` and also overrides the source of the train, validation, and test sets.
 
-  `train.py --help` works and will give you an overview of available options.
+  `train.py --help` gives an overview of available options.
 
   **Note:** Options for `--model` are currently listed in `src/model_restore_helper.get_model_class_from_name`.
 
@@ -143,7 +143,7 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
 
 ### Saving Models
 
-By default models are saved in the `/data/saved_models` folder of this repository, however this can be overridden.
+By default models are saved in the `/data/saved_models` folder of this repository, but this can be overridden.
 
 ## License
 
