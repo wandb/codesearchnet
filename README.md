@@ -14,7 +14,7 @@
 
 More context regarding the motivation for this problem is in our blog post [TODO here](#TODO-TODO).
 
-Our intention is not to maintain an open-source deep learning framework, but instead present an interesting machine learning problem and provide data and code so our results are reproducible.
+Our intent is not to maintain an open-source deep learning framework, but rather to present an interesting machine learning problem and provide data and code so our results are reproducible.
 
  ## General Architecture
 
@@ -37,9 +37,9 @@ Our intention is not to maintain an open-source deep learning framework, but ins
 ### Search Auxilary Tests
 These tests use datasets that might more closely resemble natural language searches for code.
 
-1. [CoNala](https://conala-corpus.github.io/): curated Stack Overflow data that is human-labeled with intent.  From this we construct a parallel corpus of (code, intent).
+1. [CoNala](https://conala-corpus.github.io/): Curated Stack Overflow data that is human-labeled with intent.  From this we construct a parallel corpus of (code, intent).
 
-2. [StaQC](http://web.cse.ohio-state.edu/~sun.397/docs/StaQC-www18.pdf): another dataset manually curated from Stack Overflow with (code, question) pairs.
+2. [StaQC](http://web.cse.ohio-state.edu/~sun.397/docs/StaQC-www18.pdf): Another dataset manually curated from Stack Overflow with (code, question) pairs.
 
 
 ### Other Auxilary Tests:
@@ -76,9 +76,9 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
  
   ## Running The Code	
  
-  ### Get Data	
+  ### Data Acquisition
  
- There are several options for getting data.  
+ There are several options for acquiring the data.  
  
  1. Extract the data from source and parse, annotate, and dedup the data.  To do this, see the [dataextraction README](src/dataextraction/README.md).
 
@@ -86,21 +86,21 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
 
     Most people will want to use option 2 as parsing all of the code from source can require a considerable amount of computation.  However, there may be an opportunity to parse, clean and transform the original data in new ways that can increase performance.  If you have run the setup steps above you will already have the pre-processed files, and nothing more needs to be done.  You can read more about the format of the pre-processed data [here](src/docs/DATA_FORMAT.md).
  
-  ### Optional: Setup Wandb	
+  ### Optional: WandB Setup
  
- You need to initialize wandb:
+ You need to initialize WandB:
  
    1. Navigate to the `/src` directory in this repository.
  
-   2. If its your first time using wandb on a machine you will need to login:	
+   2. If it's your first time using WandB on a machine you will need to login:	
 
       ```
       $ wandb login
       ```
 
-   3. You will be asked for your api key, which is shown on your [wandb profile page](https://app.wandb.ai/profile).
+   3. You will be asked for your api key, which is shown on your [WandB profile page](https://app.wandb.ai/profile).
  
-   4. Finally, initialize your wandb environment:	
+   4. Finally, initialize your WandB environment:	
 
       ```
       $ wandb init
@@ -135,7 +135,7 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
 
     The above command overrides the default locations for saving the model to `trained_models` and also overrides the source of the train, validation, and test sets.
 
-  `train.py --help` works and will give you an overview of available options.
+  `train.py --help` gives an overview of available options.
 
   **Note:** Options for `--model` are currently listed in `src/model_restore_helper.get_model_class_from_name`.
 
@@ -143,7 +143,7 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
 
 ### Saving Models
 
-By default models are saved in the `/data/saved_models` folder of this repository, however this can be overridden.
+By default models are saved in the `/data/saved_models` folder of this repository, but this can be overridden.
 
 ## License
 
