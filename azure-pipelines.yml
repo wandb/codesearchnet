@@ -18,6 +18,10 @@ steps:
   displayName: 'integration test: neuralbow, all languages'
   continueOnError: false
 
+- script: docker run integration_test python train.py /src /tests/data/data_train.txt /tests/data/data_train.txt /tests/data/data_train.txt --conala-data-path /tests/data/conala/ --staqc-data-path /tests/data/staqc/ --rosetta-code-data-path /tests/data/rosetta --dryrun --max-num-epochs 1 --max-files-per-dir 2
+  displayName: 'integration test: --max-files-per-dir 2'
+  continueOnError: false
+
 - script: docker run integration_test python train.py /src /tests/data/data_train.txt /tests/data/data_train.txt /tests/data/data_train.txt --conala-data-path /tests/data/conala/ --staqc-data-path /tests/data/staqc/ --rosetta-code-data-path /tests/data/rosetta --dryrun --max-num-epochs 1 --model 1dcnn
   displayName: 'integration test: 1dcnn, all languages'
   continueOnError: false
