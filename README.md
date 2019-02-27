@@ -67,12 +67,10 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
 
 
   ## Setup Notes
- 
-  1. Due to the complexity of installing all dependencies, we prepared Docker containers to run this code.  To get started, run the shell script `script/bootstrap`.  This will build a Docker container that can be used to fetch the data.
 
-  2. Run the shell script `script/setup`. This downloads the primary and auxilary datasets described above. The data is downloaded into the `data/` folder and will result in the directory structure described [here](data/README.md).
+  1. Due to the complexity of installing all dependencies, we prepared Docker containers to run this code. Run the shell script `script/setup`. This will build a Docker container and download the primary and auxilary datasets described above. The data is downloaded into the `data/` folder and will result in the directory structure described [here](data/README.md).
  
-  3. Setup [WandB](https://docs.wandb.com/docs/started.html) per the instructions below if you would like to share your results on their platform.  This is a recommended step as they are hosting the leaderboard for this task.
+  2. Setup [WandB](https://docs.wandb.com/docs/started.html) per the instructions below if you would like to share your results on their platform.  This is a recommended step as they are hosting the leaderboard for this task.
  
   ## Running The Code	
  
