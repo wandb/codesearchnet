@@ -180,7 +180,7 @@ def run(arguments, tag_in_vcs=False) -> None:
     wandb.config['best_model_path'] = str(model_path)
 
     compute_evaluation_metrics(model_path, arguments, azure_info_path, valid_data_dirs, test_data_dirs,
-            max_files_per_dir=arguments.get('--max-files-per-dir'))
+                               max_files_per_dir=arguments.get('--max-files-per-dir'))
 
 
 if __name__ == '__main__':
