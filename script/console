@@ -3,4 +3,4 @@
 set -e
 cd $(dirname "$0")/..
 
-docker run --runtime=nvidia -it --net=host -v $(pwd):/home/codenet github/codenet:gpu bash
+docker run --runtime=nvidia -it --net=host -v $(pwd):/home/csnet github/csnet:gpu bash
