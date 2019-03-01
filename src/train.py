@@ -158,8 +158,8 @@ def run(arguments, tag_in_vcs=False) -> None:
         hyperparameters['git_commit'] = git_tag_run(run_name)
 
     # turns off wandb if you don't want to log anything
-    os.environ["WANDB_MODE"] = 'dryrun' if arguments.get('--dryrun', True) else 'run'
-    os.environ["WANDB_RETRY"] = 'allow'  # facilitates resuming a paused or failed run
+    if arguments.get('--dryrun'):
+        os.environ["WANDB_MODE"] = 'dryrun'
     # save hyperparams to logging
     # must filter out type=set from logging when as that is not json serializable
     wandb.init(config={k: v for k, v in hyperparameters.items() if not isinstance(v, set)})
