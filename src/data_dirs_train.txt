@@ -1,3 +1,3 @@
-../data/python/final/jsonl/train
-../data/csharp/final/jsonl/train
-../data/java/final/jsonl/train
+../resources/data/python/final/jsonl/train
+../resources/data/csharp/final/jsonl/train
+../resources/data/java/final/jsonl/train
