@@ -178,6 +178,7 @@ def run(arguments, tag_in_vcs=False) -> None:
                            parallelize=not(arguments['--sequential']))
 
     wandb.config['best_model_path'] = str(model_path)
+    wandb.save(str(model_path))
 
     compute_evaluation_metrics(model_path, arguments, azure_info_path, valid_data_dirs, test_data_dirs)
 
