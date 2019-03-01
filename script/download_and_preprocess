@@ -2,20 +2,21 @@
 
 set -e
 
-cd /home/codenet/script/
+cd /home/dev/script/
 python download_dataset.py ../data
 python download_auxiliary_dataset.py ../data/aux
 
-mkdir -p /home/codenet/data/aux/rosetta
-mkdir -p /home/codenet/data/aux/conala
-mkdir -p /home/codenet/data/aux/staqc
+mkdir -p /home/dev/data/aux/rosetta
+mkdir -p /home/dev/data/aux/conala
+mkdir -p /home/dev/data/aux/staqc
 
-cd /home/codenet/src/dataextraction/JavaDataExtraction/
+cd /home/dev/src/dataextraction/JavaDataExtraction/
 mvn package
 mvn exec:java -DXmx8G -D"exec.mainClass"="javaextract.RosettaExtractor" -D"exec.args"="../../../data/aux/java_rosetta_code.csv ../../../data/aux/rosetta/java_rosetta_data"
 
-cd /home/codenet/src/dataextraction/CSharpDataExtraction/
+cd /home/dev/src/dataextraction/CSharpDataExtraction/
 dotnet run --project RosettaCodeTokenExtractor/RosettaCodeTokenExtractor.csproj ../../../data/aux/RosettaCodeData/Lang/C-sharp/ ../../../data/aux/rosetta
 
-cp /home/codenet/data/aux/conala-corpus/*.json /home/codenet/data/aux/conala/.
-cp /home/codenet/data/aux/StackOverflow-Question-Code-Dataset/annotation_tool/data/code_solution_labeled_data/source/python*qid_by*.pickle /home/codenet/data/aux/staqc/.
+cp /home/dev/data/aux/conala-corpus/*.json /home/dev/data/aux/conala/.
+cp /home/dev/data/aux/StackOverflow-Question-Code-Dataset/annotation_tool/data/code_solution_labeled_data/source/python*qid_by*.pickle /home/dev/data/aux/staqc/.
+cp -r -L /home/dev/data/aux/RosettaCodeData/Lang/Python /home/dev/data/aux/rosetta/

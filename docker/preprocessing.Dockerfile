@@ -65,4 +65,4 @@ RUN pip --no-cache-dir install --upgrade \
     docopt \
     pandas
 
-CMD ["/home/codenet/script/download_and_preprocess"]
+CMD ["/home/dev/script/download_and_preprocess"]

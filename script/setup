@@ -4,4 +4,4 @@ set -e
 cd $(dirname "$0")/..
 
 script/bootstrap
-docker run -v $(pwd):/home/codenet preprocessing
+docker run -v $(pwd):/home/dev preprocessing
