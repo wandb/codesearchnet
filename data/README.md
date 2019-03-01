@@ -1,4 +1,4 @@
-# This is an empty directory where you will download the training data, using the [/script/boostrap](/script/boostrap) script.
+# This is an empty directory where you will download the training data, using the [/script/setup](/script/setup) script.
 
 After downloading the data, the directory structure will look like this:
 

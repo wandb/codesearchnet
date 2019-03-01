@@ -26,6 +26,6 @@ if __name__ == '__main__':
             if not os.path.exists(language_dir):
                 os.makedirs(language_dir)
             os.chdir(language_dir)
-            call(['wget', 'https://s3.amazonaws.com/github-codenet/codenet/{}/{}.zip'.format(language, split), '-P', language_dir, '-O', '{}.zip'.format(split)])
+            call(['wget', 'https://s3.amazonaws.com/code-search-net/CodeSearchNet/{}/{}.zip'.format(language, split), '-P', language_dir, '-O', '{}.zip'.format(split)])
             call(['unzip', '{}.zip'.format(split)])
             call(['rm', '{}.zip'.format(split)])
