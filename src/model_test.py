@@ -347,14 +347,19 @@ def compute_evaluation_metrics(model_path: RichPath, arguments,
     evaluation_sets = list((l, True) for l in dataset_languages)  # type: List[Tuple[str, bool]]
     if set(tester.model.per_code_language_metadata.keys()) == dataset_languages:
         evaluation_sets = [('All', False)] + evaluation_sets
+    final_eval = {}  # type: Dict[str, float]
     for language_name, filter_language in evaluation_sets:
         if filter_language and language_name not in tester.model.per_code_language_metadata:
             continue
-        tester.evaluate(test_data, f'Test-{language_name}', filter_language=language_name if filter_language else None)
+        mrr = tester.evaluate(test_data, f'Test-{language_name}', filter_language=language_name if filter_language else None)
+        if language_name == "All":
+            final_eval['Primary MRR'] = mrr
 
         # run test using the function name as the query
-        tester.evaluate(get_dataset_from(test_data_dirs, use_func_names=True, max_files_per_dir=max_files_per_dir), f'FuncNameTest-{language_name}',
-                        filter_language=language_name if filter_language else None)
+        mrr = tester.evaluate(get_dataset_from(test_data_dirs, use_func_names=True, max_files_per_dir=max_files_per_dir), f'FuncNameTest-{language_name}',
+                              filter_language=language_name if filter_language else None)
+        if language_name == "All":
+            final_eval['FuncName MRR'] = mrr
 
         # run the test procedure on the validation set (with same batch size as test, so that MRR is comparable)
         tester.evaluate(get_dataset_from(valid_data_dirs, max_files_per_dir=max_files_per_dir), f'Validation-{language_name}',
@@ -364,12 +369,14 @@ def compute_evaluation_metrics(model_path: RichPath, arguments,
         # run evaluation on Conala dataset
         # https://conala-corpus.github.io/
         conala_path = RichPath.create(arguments['--conala-data-path'], azure_info_path)
-        tester.evaluate(get_conala_dataset(conala_path), 'CoNaLa')
+        mrr = tester.evaluate(get_conala_dataset(conala_path), 'CoNaLa')
+        final_eval['CoNaLa MRR'] = mrr
 
         # run evaluation on StaQC dataset
         # https://github.com/LittleYUYU/StackOverflow-Question-Code-Dataset
         staqc_path = RichPath.create(arguments['--staqc-data-path'], azure_info_path)
-        tester.evaluate(get_staqc_dataset(staqc_path), 'StaQC')
+        mrr = tester.evaluate(get_staqc_dataset(staqc_path), 'StaQC')
+        final_eval['StaQC MRR'] = mrr
 
     for source_language, target_language in [('python', 'csharp'),
                                              ('csharp', 'python'),
@@ -389,3 +396,5 @@ def compute_evaluation_metrics(model_path: RichPath, arguments,
                                   'RosettaCode-{}-{}'.format(source_language, target_language),
                                   test_batch_size=int(arguments['--test-batch-size']),
                                   testset_mixin=test_data)
+    if wandb.run and final_eval:
+        wandb.run.summary['Eval'] = final_eval
