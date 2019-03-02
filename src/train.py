@@ -151,6 +151,9 @@ def run(arguments, tag_in_vcs=False) -> None:
     os.environ['WANDB_DESCRIPTION'] = run_name
     hyperparameters['max_epochs'] = int(arguments.get('--max-num-epochs'))
 
+    if testrun:
+        hyperparameters['max_epochs'] = 2
+
     # override hyperparams if flag is passed
     hypers_override = arguments.get('--hypers-override')
     if hypers_override is not None:
