@@ -830,8 +830,6 @@ class Model(ABC):
                     no_improvement_counter += 1
                 epoch_number += 1
 
-            wandb.save(str(model_path.to_local_path()))
-
             log_path = os.path.join(self.__log_save_dir,
                                     f'{self.run_name}.train_log')
             wandb.save(log_path)
