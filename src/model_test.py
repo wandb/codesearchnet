@@ -378,6 +378,7 @@ def compute_evaluation_metrics(model_path: RichPath, arguments,
         mrr = tester.evaluate(get_staqc_dataset(staqc_path), 'StaQC')
         final_eval['StaQC MRR'] = mrr
 
+    rosetta_scores = []
     for source_language, target_language in [('python', 'csharp'),
                                              ('csharp', 'python'),
                                              ('python', 'java'),
@@ -391,10 +392,15 @@ def compute_evaluation_metrics(model_path: RichPath, arguments,
             source_tokens, target_tokens = get_rosetta_code_tokens(rosetta_code_path,
                                                                    source_language,
                                                                    target_language)
-            evaluate_rosetta_code(tester.model, source_language, source_tokens,
-                                  target_language, target_tokens,
-                                  'RosettaCode-{}-{}'.format(source_language, target_language),
-                                  test_batch_size=int(arguments['--test-batch-size']),
-                                  testset_mixin=test_data)
+            mrr = evaluate_rosetta_code(tester.model, source_language, source_tokens,
+                                        target_language, target_tokens,
+                                        'RosettaCode-{}-{}'.format(source_language, target_language),
+                                        test_batch_size=int(arguments['--test-batch-size']),
+                                        testset_mixin=test_data)
+            
+            rosetta_scores.append(mrr)
+
+    final_eval['Rosetta MRR'] = np.mean(rosetta_scores)
+
     if wandb.run and final_eval:
         wandb.run.summary['Eval'] = final_eval
