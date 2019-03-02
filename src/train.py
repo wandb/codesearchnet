@@ -115,7 +115,7 @@ def run(arguments, tag_in_vcs=False) -> None:
     # user specifies test run, only use small number of files.
     if testrun:
         max_files_per_dir = 2
-        # if test run flag is passed evaluate auxilary tests against syntethic data.
+        # if test run flag is passed evaluate auxilary tests against syntethic data by default.
         arguments['--rosetta-code-data-path'] = arguments.get('--rosetta-code-data-path', str(dir_path.parent/'tests/data/rosetta'))
         arguments['--staqc-data-path'] = arguments.get('--staqc-data-path', str(dir_path.parent/'tests/data/staqc'))
         arguments['--conala-data-path'] = arguments.get('--conala-data-path', str(dir_path.parent/'tests/data/conala'))
@@ -140,7 +140,7 @@ def run(arguments, tag_in_vcs=False) -> None:
     if not arguments['--rosetta-code-data-path']:
         arguments['--rosetta-code-data-path'] = str(dir_path.parent/'resources/data/aux/rosetta/')
     
-    # if you don't pass a save folder, save to azure.
+    # default model save location
     if not arguments['SAVE_FOLDER']:
         arguments['SAVE_FOLDER'] =  str(dir_path.parent/'resources/saved_models/')
 
