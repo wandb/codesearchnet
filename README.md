@@ -19,7 +19,7 @@
 
   ## Running The Model
 
-  This step assumes that you have a suitable Nvidia-GPU that supports Cuda 9.0 to execute this code.  We used [AWS P3-V100](https://aws.amazon.com/ec2/instance-types/p3/) instances (a `p3.2xlarge` is sufficient). 
+  This step assumes that you have a suitable Nvidia-GPU with [Cuda v9.0](https://developer.nvidia.com/cuda-90-download-archive) installed to execute this code.  We used [AWS P3-V100](https://aws.amazon.com/ec2/instance-types/p3/) instances (a `p3.2xlarge` is sufficient). 
 
   1. Start the model run environment by running `script/console`:
 
