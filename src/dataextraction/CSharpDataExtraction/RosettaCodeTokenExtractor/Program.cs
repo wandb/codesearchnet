@@ -41,10 +41,10 @@ namespace RosettaCodeTokenExtractor
 
             jsonWriter.WriteStartObject();
 
-            jsonWriter.WritePropertyName("filename");
+            jsonWriter.WritePropertyName("repo");
             jsonWriter.WriteValue(Path.GetRelativePath(basePath, filename));
 
-            jsonWriter.WritePropertyName("tokens");
+            jsonWriter.WritePropertyName("code_tokens");
             jsonWriter.WriteStartArray();
             foreach(var token in syntaxTree.GetRoot().DescendantTokens().Where(t=>t.Text.Length > 0))
             {
