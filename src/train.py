@@ -106,7 +106,7 @@ def make_run_id(arguments: Dict[str, Any]) -> str:
 
 def run(arguments, tag_in_vcs=False) -> None:
     azure_info_path = arguments.get('--azure-info', None)
-    testrun = arguments['--testrun']
+    testrun = arguments.get('--testrun')
     max_files_per_dir=arguments.get('--max-files-per-dir')
 
     dir_path = Path(__file__).parent.absolute()
@@ -114,6 +114,7 @@ def run(arguments, tag_in_vcs=False) -> None:
 
     # user specifies test run, only use small number of files.
     if testrun:
+        print('Executing test model run for debugging.')
         max_files_per_dir = 2
         # if test run flag is passed evaluate auxilary tests against syntethic data by default.
         arguments['--rosetta-code-data-path'] = arguments.get('--rosetta-code-data-path', str(dir_path.parent/'tests/data/rosetta'))
