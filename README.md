@@ -37,6 +37,61 @@
 
       >  python train.py --testrun
 
+ 
+  4. Now you are prepared to kickoff a full training run.  Example commands to kick off training runs:
+  * Training a neural-bag-of-words model on all languages:
+    ```	
+    python train.py --model neuralbow
+    ```	
+
+    The above command will assume default values for the location(s) of the training data and a destination where would like to save the model.  The default location for training data is specified in `/src/data_dirs_{train,valid,test}.txt`.  These files contain a list of paths where the data exists.  In the case that there is more than one path specified (seperated by a newline), then the data from all the paths will be concatenated together.  For example, this is the content of `src/data_dirs_train.txt`:
+
+    ```
+    $ cat data_dirs_train.txt
+    ../data/python/final/jsonl/train
+    ../data/csharp/final/jsonl/train
+    ../data/java/final/jsonl/train
+    ```
+    
+    By default models are saved in the `resources/saved_models` folder of this repository, however this can be overridden).
+
+  * Training a 1D-CNN model on C# data only:
+    ```
+    python train.py --model 1dcnn ..resources/data/csharp/final/jsonl/train ..resources/data/csharp/final/jsonl/valid ..resources/data/csharp/final/jsonl/test
+    ```
+
+    The above command overrides the default locations for saving the model to `trained_models` and also overrides the source of the train, validation, and test sets.
+
+  `train.py --help` gives an overview of available options.
+
+  **Note:** Options for `--model` are currently listed in `src/model_restore_helper.get_model_class_from_name`.
+
+  **Note:** Hyperparameters are specific to the respective model/encoder classes; a simple trick to discover them is to kick off a run without specifying hyperparameter choices, as that will print a list of all used hyperparameters with their default values (in JSON format).
+
+## Saving Models
+
+By default models are saved in the `/data/saved_models` folder of this repository, but this can be overridden.
+
+  
+  ## Optional: WandB Setup
+ 
+ You need to initialize WandB:
+ 
+   1. Navigate to the `/src` directory in this repository.
+ 
+   2. If it's your first time using WandB on a machine you will need to login:	
+
+      ```
+      $ wandb login
+      ```
+
+   3. You will be asked for your api key, which is shown on your [WandB profile page](https://app.wandb.ai/profile).
+ 
+   4. Finally, initialize your WandB environment:	
+
+      ```
+      $ wandb init
+ 	    ```
 
   # Overview
 
@@ -104,10 +159,8 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
  You may notice that we have provided links in the **Notes** section of the leaderboard to a dashboard that shows detailed logging of our training and evaluation metrics, as well as  model artifacts for increased transperency.  We are utlizing [Weights & Biases](https://www.wandb.com/) (WandB), which is free for open-source projects.  While logging your models on this system is optional, we encourage participants who want to be included on this leaderboard to provide as much transperency as possible.  More instructions on how to enable **WandB** are below.
 
  
-  ## Running The Code	
- 
-  ### Data Acquisition
- 
+  ## Obtaining The Data
+  
  There are several options for acquiring the data.  
  
  1. Extract the data from source and parse, annotate, and dedup the data.  To do this, see the [dataextraction README](src/dataextraction/README.md).
@@ -116,64 +169,6 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
 
     Most people will want to use option 2 as parsing all of the code from source can require a considerable amount of computation.  However, there may be an opportunity to parse, clean and transform the original data in new ways that can increase performance.  If you have run the setup steps above you will already have the pre-processed files, and nothing more needs to be done.  You can read more about the format of the pre-processed data [here](src/docs/DATA_FORMAT.md).
  
-  ### Optional: WandB Setup
- 
- You need to initialize WandB:
- 
-   1. Navigate to the `/src` directory in this repository.
- 
-   2. If it's your first time using WandB on a machine you will need to login:	
-
-      ```
-      $ wandb login
-      ```
-
-   3. You will be asked for your api key, which is shown on your [WandB profile page](https://app.wandb.ai/profile).
- 
-   4. Finally, initialize your WandB environment:	
-
-      ```
-      $ wandb init
- 	    ```
-
-
-  ### Training The Models	
- 
-  `/src/train.py` is the entry point to train all models and do some preliminary testing.
-  Example commands to kick off training runs:
-  * Training a neural-bag-of-words model on all languages:
-    ```	
-    python train.py --model neuralbow
-    ```	
-
-    The above command will assume default values for the location(s) of the training data and a destination where would like to save the model.  The default location for training data is specified in `/src/data_dirs_{train,valid,test}.txt`.  These files contain a list of paths where the data exists.  In the case that there is more than one path specified (seperated by a newline), then the data from all the paths will be concatenated together.  For example, this is the content of `src/data_dirs_train.txt`:
-
-    ```
-    $ cat data_dirs_train.txt
-    ../data/python/final/jsonl/train
-    ../data/csharp/final/jsonl/train
-    ../data/java/final/jsonl/train
-    ```
-    
-    By default models are saved in the `/data/saved_models` folder of this repository, however this can be overridden).
-    
-
-  * Training a 1D-CNN model on C# data only:
-    ```
-    python train.py --model 1dcnn trained_models/ ../data/csharp/final/jsonl/train ../data/csharp/final/jsonl/valid ../data/csharp/final/jsonl/test
-    ```
-
-    The above command overrides the default locations for saving the model to `trained_models` and also overrides the source of the train, validation, and test sets.
-
-  `train.py --help` gives an overview of available options.
-
-  **Note:** Options for `--model` are currently listed in `src/model_restore_helper.get_model_class_from_name`.
-
-  **Note:** Hyperparameters are specific to the respective model/encoder classes; a simple trick to discover them is to kick off a run without specifying hyperparameter choices, as that will print a list of all used hyperparameters with their default values (in JSON format).
-
-### Saving Models
-
-By default models are saved in the `/data/saved_models` folder of this repository, but this can be overridden.
 
 ## License
 
