@@ -109,7 +109,6 @@ def run(arguments, tag_in_vcs=False) -> None:
     max_files_per_dir=arguments.get('--max-files-per-dir')
 
     dir_path = Path(__file__).parent.absolute()
-    print(dir_path)
 
     # user specifies test run, only use small number of files.
     if testrun:
