@@ -1,6 +1,133 @@
 [![Build Status](https://dev.azure.com/hahusain/hahusain/_apis/build/status/ml-msr-github.CodeSearchNet?branchName=master)](https://dev.azure.com/hahusain/hahusain/_build/latest?definitionId=4&branchName=master) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)  [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 
+  ## Initial Setup & Downloading Datasets
 
+  You should only have to perform the below setup steps once to download the data and prepare the environment.
+
+  1. Due to the complexity of installing all dependencies, we prepared Docker containers to run this code. You can find instructions on how to install Docker in the [official docs](https://docs.docker.com/get-started/).  Additionally, you must install [Nvidia-Docker](https://github.com/NVIDIA/nvidia-docker) to satisfy GPU-compute related dependencies.  For those completely unfamiliar with Docker, [here is a gentle introduction](https://towardsdatascience.com/how-docker-can-help-you-become-a-more-effective-data-scientist-7fc048ef91d5) for data scientists.
+  
+  2. After installing Docker, you must build the required containers.  You can do this by running `script/bootstrap`:
+
+      > bash script/bootstrap
+
+  3. Next, you need to download the pre-processed datsets, which are hosted on S3.  You can do this by running `script/setup`. 
+  
+      > bash script/setup
+
+      This will download the primary and auxilary datasets described below. The data is downloaded into the `resources/data/` folder and will result in the directory structure described [here](resources/README.md).
+ 
+
+  ## Running The Model
+
+  This step assumes that you have a suitable Nvidia-GPU with [Cuda v9.0](https://developer.nvidia.com/cuda-90-download-archive) installed to execute this code.  We used [AWS P3-V100](https://aws.amazon.com/ec2/instance-types/p3/) instances (a `p3.2xlarge` is sufficient). 
+
+  1. Start the model run environment by running `script/console`:
+
+      > bash script/console
+
+      This will drop you into the shell of a docker container with all necessary dependencies installed, including the code in this repository along with data that you downloaded in the previous step.  By default you will be placed in the `src/` folder of this GitHub repository.  From here you can execute commands to run the model. 
+
+  2. Optional: setup [WandB](https://docs.wandb.com/docs/started.html) (free for open source projects) per the instructions below if you would like to share your results on their platform.  This is a recommended step as they are hosting the leaderboard for this task.
+
+  3. The entry point to this model is `src/train.py`.  You can see various options by executing the following command:
+
+      > python train.py --help
+
+      To test if everything is working on a smaller dataset, you can run the following command:
+
+      >  python train.py --testrun
+
+ 
+  4. Now you are prepared to kickoff a full training run.  Example commands to kick off training runs:
+  * Training a neural-bag-of-words model on all languages:
+    ```	
+    python train.py --model neuralbow
+    ```	
+
+    The above command will assume default values for the location(s) of the training data and a destination where would like to save the model.  The default location for training data is specified in `/src/data_dirs_{train,valid,test}.txt`.  These files contain a list of paths where the data exists.  In the case that there is more than one path specified (seperated by a newline), then the data from all the paths will be concatenated together.  For example, this is the content of `src/data_dirs_train.txt`:
+
+    ```
+    $ cat data_dirs_train.txt
+    ../data/python/final/jsonl/train
+    ../data/csharp/final/jsonl/train
+    ../data/java/final/jsonl/train
+    ```
+    
+    By default models are saved in the `resources/saved_models` folder of this repository, however this can be overridden).
+
+  * Training a 1D-CNN model on C# data only:
+    ```
+    python train.py --model 1dcnn /trained_models ..resources/data/csharp/final/jsonl/train ..resources/data/csharp/final/jsonl/valid ..resources/data/csharp/final/jsonl/test
+    ```
+
+    The above command overrides the default locations for saving the model to `trained_models` and also overrides the source of the train, validation, and test sets.
+
+  `train.py --help` gives an overview of available options.
+
+  **Note:** Options for `--model` are currently listed in `src/model_restore_helper.get_model_class_from_name`.
+
+  **Note:** Hyperparameters are specific to the respective model/encoder classes; a simple trick to discover them is to kick off a run without specifying hyperparameter choices, as that will print a list of all used hyperparameters with their default values (in JSON format).
+
+## Saving Models
+
+By default models are saved in the `/resources/saved_models` folder of this repository, but this can be overridden.
+
+  
+  ## Optional: WandB Setup
+ 
+ First, initialize WandB:
+ 
+   1. Navigate to the `/src` directory in this repository.
+ 
+   2. If it's your first time using WandB on a machine you will need to login:	
+
+      ```
+      $ wandb login
+      ```
+
+   3. You will be asked for your api key, which is shown on your [WandB profile page](https://app.wandb.ai/profile).
+ 
+   4. Finally, initialize your WandB environment:	
+
+      ```
+      $ wandb init
+ 	    ```
+
+## Obtaining The Data
+  
+ There are several options for acquiring the data.  
+ 
+ 1. Extract the data from source and parse, annotate, and dedup the data.  To do this, see the [dataextraction README](src/dataextraction/README.md).
+
+ 2. Obtain a pre-processed dataset.  (Recommended)
+
+    Most people will want to this option as parsing all of the code from source can require a considerable amount of computation.  However, there may be an opportunity to parse, clean and transform the original data in new ways that can increase performance.  If you have run the setup steps above you will already have the pre-processed files, and nothing more needs to be done. The data will be available in `/resources/data` folder of this repository, with the [this directory structure](/resources/README.md).  You can read more about the format of the pre-processed data [here](src/docs/DATA_FORMAT.md).
+
+## Pre-Processed Data Format
+Data is stored in gzipped [JSONL](http://jsonlines.org/) format.
+Each line in the uncompressed file represents one example (usually a function) in the
+following format:
+```json
+{
+  "code": "a string with the original code segment",
+  "code_tokens": ["List", "of", "code", "tokens", ...],
+  "docstring": "the original string of code documentation (or other query) about the code",
+  "docstring_tokens": ["List", "of", "docstring", "tokens", ...],
+  "comment_tokens": ["List", "of", "tokens", "within", "comments", "but", "not", "the", "docstring", ...],
+  "language": "programming language name",
+  "repo": "user/project",
+  "path": "the/path/to/the/file/in/the/repo",
+  "lineno": 23,
+  "func_name": "NameOfFunction",
+  "sha": "Optional string containing the SHA of the repo when extracted"
+}
+```
+The `repo` field usually refers to a GitHub repo, the `path` field is the file from
+which the sample was extracted, and the `lineno` field is the first line in which the
+example appears.
+Code, comment and docstring are extracted in a language-specific manner, removing
+artifacts of that language (_e.g._, XML comments in C#).  A more detailed explanation of the data format is located in [here.](src/docs/DATA_FORMAT.md)
+  
   # Overview
 
   **CodeSearchNet** is a deep-learning based framework built on [TensorFlow](https://github.com/tensorflow/tensorflow) that we use to research the problem of code retrieval using natural language.  This research is a continuation of some ideas presented [here](https://githubengineering.com/towards-natural-language-semantic-code-search/) and is a joint collaboration between GitHub and the [Deep Program Understanding](https://www.microsoft.com/en-us/research/project/program/) group at [Microsoft Research - Cambridge](https://www.microsoft.com/en-us/research/lab/microsoft-research-cambridge/).
@@ -64,85 +191,7 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
   - Code must be open sourced and clearly licensed.
   - Model must demonstrate an improvement on at least one of the auxilary tests.
 
- You may notice that we have provided links in the **Notes** section of the leaderboard to a dashboard that shows detailed logging of our training and evaluation metrics, as well as  model artifacts for increased transperency.  We are utlizing [Weights & Biases](https://www.wandb.com/) (WandB), which is free for open-source projects.  While logging your models on this system is optional, we encourage participants who want to be included on this leaderboard to provide as much transperency as possible.  More instructions on how to enable **WandB** are below.
-
-
-  ## Setup Notes
-
-  1. Due to the complexity of installing all dependencies, we prepared Docker containers to run this code. Run the shell script `script/setup`. This will build a Docker container and download the primary and auxilary datasets described above. The data is downloaded into the `data/` folder and will result in the directory structure described [here](data/README.md).
- 
-  2. Setup [WandB](https://docs.wandb.com/docs/started.html) per the instructions below if you would like to share your results on their platform.  This is a recommended step as they are hosting the leaderboard for this task.
- 
-  ## Running The Code	
- 
-  ### Data Acquisition
- 
- There are several options for acquiring the data.  
- 
- 1. Extract the data from source and parse, annotate, and dedup the data.  To do this, see the [dataextraction README](src/dataextraction/README.md).
-
- 2. Obtain a pre-processed dataset.  (Recommended)
-
-    Most people will want to use option 2 as parsing all of the code from source can require a considerable amount of computation.  However, there may be an opportunity to parse, clean and transform the original data in new ways that can increase performance.  If you have run the setup steps above you will already have the pre-processed files, and nothing more needs to be done.  You can read more about the format of the pre-processed data [here](src/docs/DATA_FORMAT.md).
- 
-  ### Optional: WandB Setup
- 
- You need to initialize WandB:
- 
-   1. Navigate to the `/src` directory in this repository.
- 
-   2. If it's your first time using WandB on a machine you will need to login:	
-
-      ```
-      $ wandb login
-      ```
-
-   3. You will be asked for your api key, which is shown on your [WandB profile page](https://app.wandb.ai/profile).
- 
-   4. Finally, initialize your WandB environment:	
-
-      ```
-      $ wandb init
- 	    ```
-
-
-  ### Training The Models	
- 
-  `/src/train.py` is the entry point to train all models and do some preliminary testing.
-  Example commands to kick off training runs:
-  * Training a neural-bag-of-words model on all languages:
-    ```	
-    python train.py --model neuralbow
-    ```	
-
-    The above command will assume default values for the location(s) of the training data and a destination where would like to save the model.  The default location for training data is specified in `/src/data_dirs_{train,valid,test}.txt`.  These files contain a list of paths where the data exists.  In the case that there is more than one path specified (seperated by a newline), then the data from all the paths will be concatenated together.  For example, this is the content of `src/data_dirs_train.txt`:
-
-    ```
-    $ cat data_dirs_train.txt
-    ../data/python/final/jsonl/train
-    ../data/csharp/final/jsonl/train
-    ../data/java/final/jsonl/train
-    ```
-    
-    By default models are saved in the `/data/saved_models` folder of this repository, however this can be overridden).
-    
-
-  * Training a 1D-CNN model on C# data only:
-    ```
-    python train.py --model 1dcnn trained_models/ ../data/csharp/final/jsonl/train ../data/csharp/final/jsonl/valid ../data/csharp/final/jsonl/test
-    ```
-
-    The above command overrides the default locations for saving the model to `trained_models` and also overrides the source of the train, validation, and test sets.
-
-  `train.py --help` gives an overview of available options.
-
-  **Note:** Options for `--model` are currently listed in `src/model_restore_helper.get_model_class_from_name`.
-
-  **Note:** Hyperparameters are specific to the respective model/encoder classes; a simple trick to discover them is to kick off a run without specifying hyperparameter choices, as that will print a list of all used hyperparameters with their default values (in JSON format).
-
-### Saving Models
-
-By default models are saved in the `/data/saved_models` folder of this repository, but this can be overridden.
+ You may notice that we have provided links in the **Notes** section of the leaderboard to a dashboard that shows detailed logging of our training and evaluation metrics, as well as  model artifacts for increased transperency.  We are utlizing [Weights & Biases](https://www.wandb.com/) (WandB), which is free for open-source projects.  While logging your models on this system is optional, we encourage participants who want to be included on this leaderboard to provide as much transperency as possible.
 
 ## License
 

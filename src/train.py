@@ -18,7 +18,7 @@ azure://semanticcodesearch/csharpdata/split/csharpCrawl-train
 Options:
     -h --help                        Show this screen.
     --max-num-epochs EPOCHS          The maximum number of epochs to run [default: 300]
-    --max-files-per-dir INT          Number of files per directory to load.
+    --max-files-per-dir INT          Maximum number of files per directory to load for training data.
     --hypers-override HYPERS         JSON dictionary overriding hyperparameter values.
     --hypers-override-file FILE      JSON file overriding hyperparameter values.
     --model MODELNAME                Choose model type. [default: neuralbowmodel]
@@ -27,6 +27,7 @@ Options:
     --run-name NAME                  Picks a name for the trained model.
     --quiet                          Less output (not one per line per minibatch). [default: False]
     --dryrun                         Do not log run into logging database. [default: False]
+    --testrun                        Do a model run on a small dataset for testing purposes. [default: False]
     --azure-info PATH                Azure authentication information file (JSON). Used to load data from Azure storage.
     --evaluate-model PATH            Run evaluation on previously trained model.
     --sequential                     Do not parallelise data-loading. Simplifies debugging. [default: False]
@@ -61,8 +62,7 @@ def run_train(model_class: Type[Model],
               run_name: str,
               quiet: bool = False,
               max_files_per_dir: Optional[int] = None,
-              parallelize: bool = True) \
-        -> RichPath:
+              parallelize: bool = True) -> RichPath:
     model = model_class(hyperparameters, run_name=run_name, model_save_dir=save_folder, log_save_dir=save_folder)
     if os.path.exists(model.model_save_path):
         model = model_restore_helper.restore(RichPath.create(model.model_save_path), is_train=True)
@@ -106,9 +106,22 @@ def make_run_id(arguments: Dict[str, Any]) -> str:
 
 def run(arguments, tag_in_vcs=False) -> None:
     azure_info_path = arguments.get('--azure-info', None)
+    testrun = arguments.get('--testrun')
+    max_files_per_dir=arguments.get('--max-files-per-dir')
 
     dir_path = Path(__file__).parent.absolute()
-    print(dir_path)
+
+    # user specifies test run, only use small number of files.
+    if testrun:
+        print('Executing test model run for debugging.')
+        max_files_per_dir = 2
+        # if test run flag is passed evaluate auxilary tests against syntethic data by default.
+        if not arguments['--rosetta-code-data-path']:
+            arguments['--rosetta-code-data-path'] = str(dir_path.parent/'tests/data/rosetta/')
+        if not arguments['--staqc-data-path']:
+            arguments['--staqc-data-path'] = str(dir_path.parent/'tests/data/staqc/')
+        if not arguments['--conala-data-path']:
+            arguments['--conala-data-path'] = str(dir_path.parent/'tests/data/conala/')
 
     # if you do not pass arguments for train/valid/test data default to files checked into repo.
     if not arguments['TRAIN_DATA_PATH']:
@@ -130,7 +143,7 @@ def run(arguments, tag_in_vcs=False) -> None:
     if not arguments['--rosetta-code-data-path']:
         arguments['--rosetta-code-data-path'] = str(dir_path.parent/'resources/data/aux/rosetta/')
     
-    # if you don't pass a save folder, save to azure.
+    # default model save location
     if not arguments['SAVE_FOLDER']:
         arguments['SAVE_FOLDER'] =  str(dir_path.parent/'resources/saved_models/')
 
@@ -144,6 +157,9 @@ def run(arguments, tag_in_vcs=False) -> None:
     # make name of wandb run = run_id (Doesn't populate yet)
     os.environ['WANDB_DESCRIPTION'] = run_name
     hyperparameters['max_epochs'] = int(arguments.get('--max-num-epochs'))
+
+    if testrun:
+        hyperparameters['max_epochs'] = 2
 
     # override hyperparams if flag is passed
     hypers_override = arguments.get('--hypers-override')
@@ -173,6 +189,7 @@ def run(arguments, tag_in_vcs=False) -> None:
                          'run-name': arguments.get('--run-name'),
                          'CLI-command': ' '.join(sys.argv)})
 
+
     if arguments.get('--evaluate-model'):
         model_path = RichPath.create(arguments['--evaluate-model'])
     else:
@@ -184,7 +201,11 @@ def run(arguments, tag_in_vcs=False) -> None:
     wandb.config['best_model_path'] = str(model_path)
     wandb.save(str(model_path.to_local_path()))
 
-    compute_evaluation_metrics(model_path, arguments, azure_info_path, valid_data_dirs, test_data_dirs)
+    # only limit files in test run if `--testrun` flag is passed by user.
+    if testrun:
+        compute_evaluation_metrics(model_path, arguments, azure_info_path, valid_data_dirs, test_data_dirs, max_files_per_dir)
+    else:
+        compute_evaluation_metrics(model_path, arguments, azure_info_path, valid_data_dirs, test_data_dirs)
 
 
 if __name__ == '__main__':
