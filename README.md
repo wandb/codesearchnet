@@ -126,7 +126,7 @@ The `repo` field usually refers to a GitHub repo, the `path` field is the file f
 which the sample was extracted, and the `lineno` field is the first line in which the
 example appears.
 Code, comment and docstring are extracted in a language-specific manner, removing
-artifacts of that language (_e.g._, XML comments in C#).
+artifacts of that language (_e.g._, XML comments in C#).  A more detailed explanation of the data format is located in [here.](src/docs/DATA_FORMAT.md)
   
   # Overview
 
