@@ -93,6 +93,41 @@ By default models are saved in the `/data/saved_models` folder of this repositor
       $ wandb init
  	    ```
 
+## Obtaining The Data
+  
+ There are several options for acquiring the data.  
+ 
+ 1. Extract the data from source and parse, annotate, and dedup the data.  To do this, see the [dataextraction README](src/dataextraction/README.md).
+
+ 2. Obtain a pre-processed dataset.  (Recommended)
+
+    Most people will want to use option 2 as parsing all of the code from source can require a considerable amount of computation.  However, there may be an opportunity to parse, clean and transform the original data in new ways that can increase performance.  If you have run the setup steps above you will already have the pre-processed files, and nothing more needs to be done.  You can read more about the format of the pre-processed data [here](src/docs/DATA_FORMAT.md).
+
+## Pre-Processed Data Format
+Data is stored in gzipped [JSONL](http://jsonlines.org/) format.
+Each line in the uncompressed file represents one example (usually a function) in the
+following format:
+```json
+{
+  "code": "a string with the original code segment",
+  "code_tokens": ["List", "of", "code", "tokens", ...],
+  "docstring": "the original string of code documentation (or other query) about the code",
+  "docstring_tokens": ["List", "of", "docstring", "tokens", ...],
+  "comment_tokens": ["List", "of", "tokens", "within", "comments", "but", "not", "the", "docstring", ...],
+  "language": "programming language name",
+  "repo": "user/project",
+  "path": "the/path/to/the/file/in/the/repo",
+  "lineno": 23,
+  "func_name": "NameOfFunction",
+  "sha": "Optional string containing the SHA of the repo when extracted"
+}
+```
+The `repo` field usually refers to a GitHub repo, the `path` field is the file from
+which the sample was extracted, and the `lineno` field is the first line in which the
+example appears.
+Code, comment and docstring are extracted in a language-specific manner, removing
+artifacts of that language (_e.g._, XML comments in C#).
+  
   # Overview
 
   **CodeSearchNet** is a deep-learning based framework built on [TensorFlow](https://github.com/tensorflow/tensorflow) that we use to research the problem of code retrieval using natural language.  This research is a continuation of some ideas presented [here](https://githubengineering.com/towards-natural-language-semantic-code-search/) and is a joint collaboration between GitHub and the [Deep Program Understanding](https://www.microsoft.com/en-us/research/project/program/) group at [Microsoft Research - Cambridge](https://www.microsoft.com/en-us/research/lab/microsoft-research-cambridge/).
@@ -157,18 +192,6 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
   - Model must demonstrate an improvement on at least one of the auxilary tests.
 
  You may notice that we have provided links in the **Notes** section of the leaderboard to a dashboard that shows detailed logging of our training and evaluation metrics, as well as  model artifacts for increased transperency.  We are utlizing [Weights & Biases](https://www.wandb.com/) (WandB), which is free for open-source projects.  While logging your models on this system is optional, we encourage participants who want to be included on this leaderboard to provide as much transperency as possible.  More instructions on how to enable **WandB** are below.
-
- 
-  ## Obtaining The Data
-  
- There are several options for acquiring the data.  
- 
- 1. Extract the data from source and parse, annotate, and dedup the data.  To do this, see the [dataextraction README](src/dataextraction/README.md).
-
- 2. Obtain a pre-processed dataset.  (Recommended)
-
-    Most people will want to use option 2 as parsing all of the code from source can require a considerable amount of computation.  However, there may be an opportunity to parse, clean and transform the original data in new ways that can increase performance.  If you have run the setup steps above you will already have the pre-processed files, and nothing more needs to be done.  You can read more about the format of the pre-processed data [here](src/docs/DATA_FORMAT.md).
- 
 
 ## License
 
