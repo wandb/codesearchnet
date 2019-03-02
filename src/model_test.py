@@ -222,8 +222,8 @@ def get_rosetta_code_tokens(path: RichPath,
     def _get_language_tokens(language):
         if language == 'python':
             return [{
-                'filename': '/'.join(f.path.split('/')[-2:]),
-                'tokens': tokenize_python_from_string(f.read_as_text(), func_only=False).code_tokens,
+                'repo': '/'.join(f.path.split('/')[-2:]),
+                'code_tokens': tokenize_python_from_string(f.read_as_text(), func_only=False).code_tokens,
             } for f in path.iterate_filtered_files_in_dir('Python/*/*.py')]
         elif language == 'csharp':
             return list(list(path.iterate_filtered_files_in_dir('csharp_*.jsonl.gz'))[0].read_by_file_suffix())
@@ -238,7 +238,7 @@ def get_rosetta_code_tokens(path: RichPath,
     def _reorganize(tokens):
         per_task = defaultdict(list)
         for d in tokens:
-            per_task[d['filename'].split('/')[0]].append(d['tokens'])
+            per_task[d['repo'].split('/')[0]].append(d['code_tokens'])
         return dict(per_task)
 
     source_per_task = _reorganize(source_tokens)
