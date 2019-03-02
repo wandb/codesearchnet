@@ -121,17 +121,17 @@ def run(arguments, tag_in_vcs=False) -> None:
 
     # supply defaults for the auxilary tests
     if not arguments['--conala-data-path']:
-        arguments['--conala-data-path'] = str(dir_path.parent/'data/aux/conala/')
+        arguments['--conala-data-path'] = str(dir_path.parent/'resources/data/aux/conala/')
 
     if not arguments['--staqc-data-path']:
-        arguments['--staqc-data-path'] = str(dir_path.parent/'data/aux/staqc/')
+        arguments['--staqc-data-path'] = str(dir_path.parent/'resources/data/aux/staqc/')
     
     if not arguments['--rosetta-code-data-path']:
-        arguments['--rosetta-code-data-path'] = str(dir_path.parent/'data/aux/rosetta/')
+        arguments['--rosetta-code-data-path'] = str(dir_path.parent/'resources/data/aux/rosetta/')
     
     # if you don't pass a save folder, save to azure.
     if not arguments['SAVE_FOLDER']:
-        arguments['SAVE_FOLDER'] =  str(dir_path.parent/'data/saved_models/')
+        arguments['SAVE_FOLDER'] =  str(dir_path.parent/'resources/saved_models/')
 
     save_folder = arguments['SAVE_FOLDER']
 

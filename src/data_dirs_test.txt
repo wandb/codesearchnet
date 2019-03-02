@@ -1,3 +1,3 @@
-../data/python/final/jsonl/test
-../data/csharp/final/jsonl/test
-../data/java/final/jsonl/test
+../resources/data/python/final/jsonl/test
+../resources/data/csharp/final/jsonl/test
+../resources/data/java/final/jsonl/test
