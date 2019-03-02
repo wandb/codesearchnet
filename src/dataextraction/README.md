@@ -1,13 +1,12 @@
 # Data Extraction
 
-This document describes the format and process for extracting data from the raw source from various languages.
+This document describes the process for extracting raw data from the original source from various languages.  This might be desireable incase you wish to change the data transformations (which consists of parsing and deduping code).  These steps are optional and a pre-processed version of the data with all the transformations applied can be obtained by following the **Initial Setup** section of the [README](/README.md) in the root of this project.
 
-## Extracting Data
+## Extracting Data From Source
 
 To extract the data:
 * Download and parse the code using the language-specific extractor (in `src/dataextraction/{python, CSharpDataExtraction, JavaDataExtraction}`).  These scripts will generate intermediate `.jsonl.gz` files which must be deduped using the instructions below. Documentation for each language can be found in each folder.
 * Run `dataextraction/dedup_split.py` to deduplicate and split the data from the intermediate `.jsonl.gz` into folds.
-
 
 ## Filtering Conventions
 For all languages, we do some filtering of data to ensure that the samples we are
