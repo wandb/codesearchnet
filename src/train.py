@@ -28,6 +28,7 @@ Options:
     --quiet                          Less output (not one per line per minibatch). [default: False]
     --dryrun                         Do not log run into logging database. [default: False]
     --azure-info PATH                Azure authentication information file (JSON). Used to load data from Azure storage.
+    --evaluate-model PATH            Run evaluation on previously trained model.
     --sequential                     Do not parallelise data-loading. Simplifies debugging. [default: False]
     --debug                          Enable debug routines. [default: False]
     --conala-data-path PATH          Path to Conala data set which is a directory filled with .json files.
@@ -172,13 +173,16 @@ def run(arguments, tag_in_vcs=False) -> None:
                          'run-name': arguments.get('--run-name'),
                          'CLI-command': ' '.join(sys.argv)})
 
-    model_path = run_train(model_class, train_data_dirs, valid_data_dirs, save_folder, hyperparameters,
-                           azure_info_path, run_name, arguments['--quiet'],
-                           max_files_per_dir=arguments.get('--max-files-per-dir'),
-                           parallelize=not(arguments['--sequential']))
+    if arguments.get('--evaluate-model'):
+        model_path = RichPath.create(arguments['--evaluate-model'])
+    else:
+        model_path = run_train(model_class, train_data_dirs, valid_data_dirs, save_folder, hyperparameters,
+                               azure_info_path, run_name, arguments['--quiet'],
+                               max_files_per_dir=arguments.get('--max-files-per-dir'),
+                               parallelize=not(arguments['--sequential']))
 
     wandb.config['best_model_path'] = str(model_path)
-    wandb.save(str(model_path))
+    wandb.save(str(model_path.to_local_path()))
 
     compute_evaluation_metrics(model_path, arguments, azure_info_path, valid_data_dirs, test_data_dirs)
 
