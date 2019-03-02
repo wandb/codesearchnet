@@ -50,9 +50,9 @@
 
     ```
     $ cat data_dirs_train.txt
-    ../data/python/final/jsonl/train
-    ../data/csharp/final/jsonl/train
-    ../data/java/final/jsonl/train
+    ../resources/data/python/final/jsonl/train
+    ../resources/data/csharp/final/jsonl/train
+    ../resources/data/java/final/jsonl/train
     ```
     
     By default models are saved in the `resources/saved_models` folder of this repository, however this can be overridden).
