@@ -57,7 +57,7 @@
 
   * Training a 1D-CNN model on C# data only:
     ```
-    python train.py --model 1dcnn ..resources/data/csharp/final/jsonl/train ..resources/data/csharp/final/jsonl/valid ..resources/data/csharp/final/jsonl/test
+    python train.py --model 1dcnn /trained_models ..resources/data/csharp/final/jsonl/train ..resources/data/csharp/final/jsonl/valid ..resources/data/csharp/final/jsonl/test
     ```
 
     The above command overrides the default locations for saving the model to `trained_models` and also overrides the source of the train, validation, and test sets.
