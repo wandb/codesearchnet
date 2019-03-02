@@ -27,7 +27,7 @@ Options:
     --run-name NAME                  Picks a name for the trained model.
     --quiet                          Less output (not one per line per minibatch). [default: False]
     --dryrun                         Do not log run into logging database. [default: False]
-    --testrun                        Do a training and test run on a small dataset for testing purposes. [default: False]
+    --testrun                        Do a model run on a small dataset for testing purposes. [default: False]
     --azure-info PATH                Azure authentication information file (JSON). Used to load data from Azure storage.
     --sequential                     Do not parallelise data-loading. Simplifies debugging. [default: False]
     --debug                          Enable debug routines. [default: False]
@@ -115,10 +115,10 @@ def run(arguments, tag_in_vcs=False) -> None:
     # user specifies test run, only use small number of files.
     if testrun:
         max_files_per_dir = 2
-
-    # because rosetta is a special case, if testrun flag is passed, evaluate against syntethic data
-    if testrun and not arguments.get('--rosetta-code-data-path', None):
-        arguments['--rosetta-code-data-path'] = str(dir_path.parent/'tests/data/rosetta')
+        # if test run flag is passed evaluate auxilary tests against syntethic data.
+        arguments['--rosetta-code-data-path'] = arguments.get('--rosetta-code-data-path', str(dir_path.parent/'tests/data/rosetta'))
+        arguments['--staqc-data-path'] = arguments.get('--staqc-data-path', str(dir_path.parent/'tests/data/staqc'))
+        arguments['--conala-data-path'] = arguments.get('--conala-data-path', str(dir_path.parent/'tests/data/conala'))
 
     # if you do not pass arguments for train/valid/test data default to files checked into repo.
     if not arguments['TRAIN_DATA_PATH']:
