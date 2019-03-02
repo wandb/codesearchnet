@@ -15,6 +15,8 @@
       > bash script/setup
 
       This will download the primary and auxilary datasets described below. The data is downloaded into the `resources/data/` folder and will result in the directory structure described [here](resources/README.md).
+
+      **The size of the datasets you will download (most of them compressed) have a combined size of only ~ 3.5 GB.**  The primary datset (described below) has approximately 3.2 million examples across train, validation and holdout partitions. 
  
 
   ## Running The Model
@@ -101,7 +103,7 @@ By default models are saved in the `/resources/saved_models` folder of this repo
 
  2. Obtain a pre-processed dataset.  (Recommended)
 
-    Most people will want to this option as parsing all of the code from source can require a considerable amount of computation.  However, there may be an opportunity to parse, clean and transform the original data in new ways that can increase performance.  If you have run the setup steps above you will already have the pre-processed files, and nothing more needs to be done. The data will be available in `/resources/data` folder of this repository, with the [this directory structure](/resources/README.md).  You can read more about the format of the pre-processed data [here](src/docs/DATA_FORMAT.md).
+    Most people will want to this option as parsing all of the code from source can require a considerable amount of computation.  However, there may be an opportunity to parse, clean and transform the original data in new ways that can increase performance.  If you have run the setup steps above you will already have the pre-processed files, and nothing more needs to be done. The data will be available in the `/resources/data` folder of this repository, with the [this directory structure](/resources/README.md).  You can read more about the format of the pre-processed data [here](src/docs/DATA_FORMAT.md).
 
 ## Pre-Processed Data Format
 Data is stored in gzipped [JSONL](http://jsonlines.org/) format.

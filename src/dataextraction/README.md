@@ -6,7 +6,7 @@ This document describes the process for extracting raw data from the original so
 
 To extract the data:
 * Download and parse the code using the language-specific extractor (in `src/dataextraction/{python, CSharpDataExtraction, JavaDataExtraction}`).  These scripts will generate intermediate `.jsonl.gz` files which must be deduped using the instructions below. Documentation for each language can be found in each folder.
-* Run `dataextraction/dedup_split.py` to deduplicate and split the data from the intermediate `.jsonl.gz` into folds.
+* Run `dataextraction/dedup_split.py` to deduplicate and split the data from the intermediate `.jsonl.gz` into train, validation, test and holdout partitions.
 
 ## Filtering Conventions
 For all languages, we do some filtering of data to ensure that the samples we are
