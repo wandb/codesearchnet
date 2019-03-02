@@ -3,28 +3,29 @@
 After downloading the data, the directory structure will look like this:
 
 ```
-├── csharp
-│   └── final
-│       └── jsonl
-│           ├── test
-│           ├── train
-│           └── valid
-├── java
-│   └── final
-│       └── jsonl
-│           ├── test
-│           ├── train
-│           └── valid
-├── python
-│   └── final
-│       └── jsonl
-│           ├── test
-│           ├── train
-│           └── valid
-├── aux
-│   ├── conala
-│   ├── rosetta
-│   └── staqc
+├──data
+|    ├── csharp
+|    │   └── final
+|    │       └── jsonl
+|    │           ├── test
+|    │           ├── train
+|    │           └── valid
+|    ├── java
+|    │   └── final
+|    │       └── jsonl
+|    │           ├── test
+|    │           ├── train
+|    │           └── valid
+|    ├── python
+|    │   └── final
+|    │       └── jsonl
+|    │           ├── test
+|    │           ├── train
+|    │           └── valid
+|    └── aux
+|        ├── conala
+|        ├── rosetta
+|        └── staqc
 └── saved_models
 ```
 
