@@ -61,8 +61,7 @@ def run_train(model_class: Type[Model],
               run_name: str,
               quiet: bool = False,
               max_files_per_dir: Optional[int] = None,
-              parallelize: bool = True) \
-        -> RichPath:
+              parallelize: bool = True) -> RichPath:
     model = model_class(hyperparameters, run_name=run_name, model_save_dir=save_folder, log_save_dir=save_folder)
     if os.path.exists(model.model_save_path):
         model = model_restore_helper.restore(RichPath.create(model.model_save_path), is_train=True)
@@ -117,9 +116,12 @@ def run(arguments, tag_in_vcs=False) -> None:
         print('Executing test model run for debugging.')
         max_files_per_dir = 2
         # if test run flag is passed evaluate auxilary tests against syntethic data by default.
-        arguments['--rosetta-code-data-path'] = arguments.get('--rosetta-code-data-path', str(dir_path.parent/'tests/data/rosetta'))
-        arguments['--staqc-data-path'] = arguments.get('--staqc-data-path', str(dir_path.parent/'tests/data/staqc'))
-        arguments['--conala-data-path'] = arguments.get('--conala-data-path', str(dir_path.parent/'tests/data/conala'))
+        if not arguments['--rosetta-code-data-path']:
+            arguments['--rosetta-code-data-path'] = str(dir_path.parent/'tests/data/rosetta/')
+        if not arguments['--staqc-data-path']:
+            arguments['--staqc-data-path'] = str(dir_path.parent/'tests/data/staqc/')
+        if not arguments['--conala-data-path']:
+            arguments['--conala-data-path'] = str(dir_path.parent/'tests/data/conala/')
 
     # if you do not pass arguments for train/valid/test data default to files checked into repo.
     if not arguments['TRAIN_DATA_PATH']:
