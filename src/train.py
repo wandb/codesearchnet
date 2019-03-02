@@ -27,7 +27,7 @@ Options:
     --run-name NAME                  Picks a name for the trained model.
     --quiet                          Less output (not one per line per minibatch). [default: False]
     --dryrun                         Do not log run into logging database. [default: False]
-    --testrun                        Do a run on a small dataset. [default: False]
+    --testrun                        Do a training and test run on a small dataset for testing purposes. [default: False]
     --azure-info PATH                Azure authentication information file (JSON). Used to load data from Azure storage.
     --sequential                     Do not parallelise data-loading. Simplifies debugging. [default: False]
     --debug                          Enable debug routines. [default: False]
