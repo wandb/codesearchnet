@@ -109,12 +109,16 @@ def run(arguments, tag_in_vcs=False) -> None:
     testrun = arguments['--testrun']
     max_files_per_dir=arguments.get('--max-files-per-dir')
 
+    dir_path = Path(__file__).parent.absolute()
+    print(dir_path)
+
     # user specifies test run, only use small number of files.
     if testrun:
         max_files_per_dir = 2
 
-    dir_path = Path(__file__).parent.absolute()
-    print(dir_path)
+    # because rosetta is a special case, if testrun flag is passed, evaluate against syntethic data
+    if testrun and not arguments.get('--rosetta-code-data-path', None):
+        arguments['--rosetta-code-data-path'] = str(dir_path.parent/'tests/data/rosetta')
 
     # if you do not pass arguments for train/valid/test data default to files checked into repo.
     if not arguments['TRAIN_DATA_PATH']:
