@@ -18,7 +18,7 @@ azure://semanticcodesearch/csharpdata/split/csharpCrawl-train
 Options:
     -h --help                        Show this screen.
     --max-num-epochs EPOCHS          The maximum number of epochs to run [default: 300]
-    --max-files-per-dir INT          Number of files per directory to load.
+    --max-files-per-dir INT          Maximum number of files per directory to load for training data.
     --hypers-override HYPERS         JSON dictionary overriding hyperparameter values.
     --hypers-override-file FILE      JSON file overriding hyperparameter values.
     --model MODELNAME                Choose model type. [default: neuralbowmodel]
@@ -27,6 +27,7 @@ Options:
     --run-name NAME                  Picks a name for the trained model.
     --quiet                          Less output (not one per line per minibatch). [default: False]
     --dryrun                         Do not log run into logging database. [default: False]
+    --testrun                        Do a run on a small dataset. [default: False]
     --azure-info PATH                Azure authentication information file (JSON). Used to load data from Azure storage.
     --sequential                     Do not parallelise data-loading. Simplifies debugging. [default: False]
     --debug                          Enable debug routines. [default: False]
@@ -105,6 +106,12 @@ def make_run_id(arguments: Dict[str, Any]) -> str:
 
 def run(arguments, tag_in_vcs=False) -> None:
     azure_info_path = arguments.get('--azure-info', None)
+    testrun = arguments['--testrun']
+    max_files_per_dir=arguments.get('--max-files-per-dir')
+
+    # user specifies test run, only use small number of files.
+    if testrun:
+        max_files_per_dir = 2
 
     dir_path = Path(__file__).parent.absolute()
     print(dir_path)
@@ -174,13 +181,17 @@ def run(arguments, tag_in_vcs=False) -> None:
 
     model_path = run_train(model_class, train_data_dirs, valid_data_dirs, save_folder, hyperparameters,
                            azure_info_path, run_name, arguments['--quiet'],
-                           max_files_per_dir=arguments.get('--max-files-per-dir'),
+                           max_files_per_dir=max_files_per_dir,
                            parallelize=not(arguments['--sequential']))
 
     wandb.config['best_model_path'] = str(model_path)
     wandb.save(str(model_path))
 
-    compute_evaluation_metrics(model_path, arguments, azure_info_path, valid_data_dirs, test_data_dirs)
+    # only limit files in test run if `--testrun` flag is passed by user.
+    if testrun:
+        compute_evaluation_metrics(model_path, arguments, azure_info_path, valid_data_dirs, test_data_dirs, max_files_per_dir)
+    else:
+        compute_evaluation_metrics(model_path, arguments, azure_info_path, valid_data_dirs, test_data_dirs)
 
 
 if __name__ == '__main__':

@@ -1,5 +1,42 @@
 [![Build Status](https://dev.azure.com/hahusain/hahusain/_apis/build/status/ml-msr-github.CodeSearchNet?branchName=master)](https://dev.azure.com/hahusain/hahusain/_build/latest?definitionId=4&branchName=master) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)  [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 
+  ## Initial Setup
+
+  You should only have to perform the below setup steps once to download the data and prepare the environment.
+
+  1. Due to the complexity of installing all dependencies, we prepared Docker containers to run this code. You can find instructions on how to install Docker in the [official docs](https://docs.docker.com/get-started/).  Additionally, you must install [Nvidia-Docker](https://github.com/NVIDIA/nvidia-docker) to satisfy GPU-compute related dependencies.  For those completely unfamiliar with Docker, [here is a gentle introduction](https://towardsdatascience.com/how-docker-can-help-you-become-a-more-effective-data-scientist-7fc048ef91d5) for data scientists.
+  
+  2. After installing Docker, you must build the required containers.  You can do this by running `script/bootstrap`:
+
+      > bash script/bootstrap
+
+  3. Next, you need to download the pre-processed datsets, which are hosted on S3.  You can do this by running the `script/setup`. 
+  
+      > bash script/setup
+
+      This will download the primary and auxilary datasets described below. The data is downloaded into the `resources/data/` folder and will result in the directory structure described [here](resources/README.md).
+ 
+
+  ## Running The Model
+
+  This step assumes that you have a suitable Nvidia-GPU that supports Cuda 9.0 to execute this code.  We used [AWS P3-V100](https://aws.amazon.com/ec2/instance-types/p3/) instances (a `p3.2xlarge` is sufficient). 
+
+  1. Start the model run environment by running `script/console`:
+
+      > bash script/console
+
+      This will drop you into the shell of a docker container with all necessary dependencies installed, including the code in this repository.  By default you will be placed in the `src/` folder of this GitHub repository.  From here you can execute commands to run the model. 
+
+  2. Optional: setup [WandB](https://docs.wandb.com/docs/started.html) (free for open source projects) per the instructions below if you would like to share your results on their platform.  This is a recommended step as they are hosting the leaderboard for this task.
+
+  3. The entry point to this model is `src/train.py`.  You can see various options by executing the following command:
+
+      > python train.py --help
+
+      To test if everything is working on a smaller dataset, you can run the following command:
+
+      >  python train.py --testrun
+
 
   # Overview
 
@@ -66,12 +103,6 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
 
  You may notice that we have provided links in the **Notes** section of the leaderboard to a dashboard that shows detailed logging of our training and evaluation metrics, as well as  model artifacts for increased transperency.  We are utlizing [Weights & Biases](https://www.wandb.com/) (WandB), which is free for open-source projects.  While logging your models on this system is optional, we encourage participants who want to be included on this leaderboard to provide as much transperency as possible.  More instructions on how to enable **WandB** are below.
 
-
-  ## Setup Notes
-
-  1. Due to the complexity of installing all dependencies, we prepared Docker containers to run this code. Run the shell script `script/setup`. This will build a Docker container and download the primary and auxilary datasets described above. The data is downloaded into the `data/` folder and will result in the directory structure described [here](data/README.md).
- 
-  2. Setup [WandB](https://docs.wandb.com/docs/started.html) per the instructions below if you would like to share your results on their platform.  This is a recommended step as they are hosting the leaderboard for this task.
  
   ## Running The Code	
  
