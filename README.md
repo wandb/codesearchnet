@@ -10,7 +10,7 @@
 
       > bash script/bootstrap
 
-  3. Next, you need to download the pre-processed datsets, which are hosted on S3.  You can do this by running the `script/setup`. 
+  3. Next, you need to download the pre-processed datsets, which are hosted on S3.  You can do this by running `script/setup`. 
   
       > bash script/setup
 
@@ -25,7 +25,7 @@
 
       > bash script/console
 
-      This will drop you into the shell of a docker container with all necessary dependencies installed, including the code in this repository.  By default you will be placed in the `src/` folder of this GitHub repository.  From here you can execute commands to run the model. 
+      This will drop you into the shell of a docker container with all necessary dependencies installed, including the code in this repository along with data that you downloaded in the previous step.  By default you will be placed in the `src/` folder of this GitHub repository.  From here you can execute commands to run the model. 
 
   2. Optional: setup [WandB](https://docs.wandb.com/docs/started.html) (free for open source projects) per the instructions below if you would like to share your results on their platform.  This is a recommended step as they are hosting the leaderboard for this task.
 
@@ -70,12 +70,12 @@
 
 ## Saving Models
 
-By default models are saved in the `/data/saved_models` folder of this repository, but this can be overridden.
+By default models are saved in the `/resources/saved_models` folder of this repository, but this can be overridden.
 
   
   ## Optional: WandB Setup
  
- You need to initialize WandB:
+ First, initialize WandB:
  
    1. Navigate to the `/src` directory in this repository.
  
@@ -101,7 +101,7 @@ By default models are saved in the `/data/saved_models` folder of this repositor
 
  2. Obtain a pre-processed dataset.  (Recommended)
 
-    Most people will want to use option 2 as parsing all of the code from source can require a considerable amount of computation.  However, there may be an opportunity to parse, clean and transform the original data in new ways that can increase performance.  If you have run the setup steps above you will already have the pre-processed files, and nothing more needs to be done.  You can read more about the format of the pre-processed data [here](src/docs/DATA_FORMAT.md).
+    Most people will want to this option as parsing all of the code from source can require a considerable amount of computation.  However, there may be an opportunity to parse, clean and transform the original data in new ways that can increase performance.  If you have run the setup steps above you will already have the pre-processed files, and nothing more needs to be done. The data will be available in `/resources/data` folder of this repository, with the [this directory structure](/resources/README.md).  You can read more about the format of the pre-processed data [here](src/docs/DATA_FORMAT.md).
 
 ## Pre-Processed Data Format
 Data is stored in gzipped [JSONL](http://jsonlines.org/) format.
@@ -191,7 +191,7 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
   - Code must be open sourced and clearly licensed.
   - Model must demonstrate an improvement on at least one of the auxilary tests.
 
- You may notice that we have provided links in the **Notes** section of the leaderboard to a dashboard that shows detailed logging of our training and evaluation metrics, as well as  model artifacts for increased transperency.  We are utlizing [Weights & Biases](https://www.wandb.com/) (WandB), which is free for open-source projects.  While logging your models on this system is optional, we encourage participants who want to be included on this leaderboard to provide as much transperency as possible.  More instructions on how to enable **WandB** are below.
+ You may notice that we have provided links in the **Notes** section of the leaderboard to a dashboard that shows detailed logging of our training and evaluation metrics, as well as  model artifacts for increased transperency.  We are utlizing [Weights & Biases](https://www.wandb.com/) (WandB), which is free for open-source projects.  While logging your models on this system is optional, we encourage participants who want to be included on this leaderboard to provide as much transperency as possible.
 
 ## License
 
