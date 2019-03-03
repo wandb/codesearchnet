@@ -233,6 +233,51 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
 
  You may notice that we have provided links in the **Notes** section of the leaderboard to a dashboard that shows detailed logging of our training and evaluation metrics, as well as  model artifacts for increased transperency.  We are utlizing [Weights & Biases](https://www.wandb.com/) (WandB), which is free for open-source projects.  While logging your models on this system is optional, we encourage participants who want to be included on this leaderboard to provide as much transperency as possible.
 
+## Downloading Datasets From S3
+
+### Pre-processed data
+
+The shell script `/script/setup` will automatically download these files into the `/resources/data` directory, however here are the links to the relevant files for visibility:
+
+The s3 links follow this pattern:
+
+> https://s3.amazonaws.com/code-search-net/CodeSearchNet/`{python,java,csharp}`/`{train, valid,test,holdout}`.zip
+
+For example, the link for the `java` validation partition is:
+
+> https://s3.amazonaws.com/code-search-net/CodeSearchNet/java/valid.zip
+
+
+### Raw Data - Filtered
+
+You may desire to extract the data from source and parse, annotate, dedup and partition the data yourself, instead of starting with the pre-processed version of the data.  Instructions on how to do this are located in the [dataextraction README](src/dataextraction/README.md).  This data consists of the csv file with two fields: **(1)** The full path (owner/repo/path) and **(2)** the raw string contents of the file. These csv files are filtered to only include paths only ending in relevant file extensions (`.py`, `.java` or `.cs`). This data is located in the following S3 bucket:
+
+> https://s3.amazonaws.com/code-search-net/CodeSearchNet/`{python,java,csharp}`/raw/
+
+Each bucket contains multi-part csv files, and there are a different number of csv files for each language.
+
+Python (10 files)
+
+`000000000000.csv` to `000000000009.csv`
+
+Java and CSharp (100 files each)
+
+`000000000000.csv` to `000000000099.csv`
+
+Note that Python only has 10 csv files, where Java and CSharp have 100 files each.  For example, the link for the first python file is:
+
+> https://s3.amazonaws.com/code-search-net/CodeSearchNet/python/raw/000000000000.csv
+
+
+### Raw Data - Unfiltered
+
+The filtered version of the raw data does not contain the full contents of the open source repositories, only files with `.py`, `.java` or `.cs` extensions.  However, for licensing purposes it may be useful to refer back to the full contents of the repository so that all disclaimers and licenses can be viewed.  The format of this data is identical to the filtered raw data, except that it is not filtered by file extension.  These files are located in the following s3 bucket, and consist of 500 csv files:
+
+> https://s3.amazonaws.com/code-search-net/CodeSearchNet/all/
+
+`000000000000.csv` to `000000000499.csv`
+
+
 ## License
 
 This project is released under the [MIT License](LICENSE).
