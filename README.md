@@ -302,7 +302,7 @@ Note that Python only has 10 csv files, where Java and CSharp have 100 files eac
 
 ### Raw Data - Unfiltered
 
-The filtered version of the raw data does not contain the full contents of the open source repositories, only files with `.py`, `.java` or `.cs` extensions.  However, for licensing purposes it may be useful to refer back to the full contents of the repository so that all disclaimers and licenses can be viewed.  The format of this data is identical to the filtered raw data, except that it is not filtered by file extension.  These files are located in the following s3 bucket, and consist of 500 csv files:
+The filtered version of the raw data does not contain the full contents of the open source repositories, only files with `.py`, `.java` or `.cs` extensions.  However, for documentation purposes it may be useful to refer back to the full contents of the repository so that all disclaimers and licenses can be viewed.  The format of this data is identical to the filtered raw data, except that it is not filtered by file extension.  These files are located in the following s3 bucket, and consist of 500 csv files:
 
 > https://s3.amazonaws.com/code-search-net/CodeSearchNet/all/
 
