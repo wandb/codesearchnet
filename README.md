@@ -5,17 +5,13 @@
   You should only have to perform the below setup steps once to download the data and prepare the environment.
 
   1. Due to the complexity of installing all dependencies, we prepared Docker containers to run this code. You can find instructions on how to install Docker in the [official docs](https://docs.docker.com/get-started/).  Additionally, you must install [Nvidia-Docker](https://github.com/NVIDIA/nvidia-docker) to satisfy GPU-compute related dependencies.  For those completely unfamiliar with Docker, [here is a gentle introduction](https://towardsdatascience.com/how-docker-can-help-you-become-a-more-effective-data-scientist-7fc048ef91d5) for data scientists.
+
+  2. After installing Docker, you need to download the pre-processed datsets, which are hosted on S3.  You can do this by running `script/setup`. 
   
-  2. After installing Docker, you must build the required containers.  You can do this by running `script/bootstrap`:
+      > script/setup
 
-      > bash script/bootstrap
-
-  3. Next, you need to download the pre-processed datsets, which are hosted on S3.  You can do this by running `script/setup`. 
-  
-      > bash script/setup
-
-      This will download the primary and auxilary datasets described below. The data is downloaded into the `resources/data/` folder and will result in the directory structure described [here](resources/README.md).
-
+      This will first build the required containers and then download the primary and auxilary datasets described below. The data is downloaded into the `resources/data/` folder and will result in the directory structure described [here](resources/README.md).
+      
       **The size of the datasets you will download (most of them compressed) have a combined size of only ~ 3.5 GB.**  The primary datset (described below) has approximately 3.2 million examples across train, validation and holdout partitions. 
  
 
@@ -25,7 +21,7 @@
 
   1. Start the model run environment by running `script/console`:
 
-      > bash script/console
+      > script/console
 
       This will drop you into the shell of a docker container with all necessary dependencies installed, including the code in this repository along with data that you downloaded in the previous step.  By default you will be placed in the `src/` folder of this GitHub repository.  From here you can execute commands to run the model. 
 
@@ -37,7 +33,7 @@
 
       To test if everything is working on a smaller dataset, you can run the following command:
 
-      >  python train.py --testrun
+      > python train.py --testrun
 
  
   4. Now you are prepared to kickoff a full training run.  Example commands to kick off training runs:
