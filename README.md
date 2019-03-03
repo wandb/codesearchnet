@@ -196,10 +196,12 @@ Our intent is not to maintain an open-source deep learning framework, but rather
 
  ## Evaluation
 
- The metric we use for evaluation is [Mean Reciprocal Rank](https://en.wikipedia.org/wiki/Mean_reciprocal_rank).
+ The metric we use for evaluation is [Mean Reciprocal Rank](https://en.wikipedia.org/wiki/Mean_reciprocal_rank).  For the MRR calculation, we use 1,000 distractors constructed from negative samples within the batch at evaluation time (this means the batch size at evaluation time is also 1,000).  
+ 
+ For example, consider a dataset of 10,000 code comment pairs. We set the batch size at evaluation time (during inference, not training) to be 1,000.  For every (`comment`, `code`) pair in the batch, we evaluate the our ability to retrieve code using the docstring (using a distance metric of our choice, ex: cosine distance) using the rest of examples in the batch as distractors.  We then average the MRR across all of the batches to compute MRR for the dataset.  In the case where the number of records in the dataset is not divisible by 1,000, we still construct batches of size 1,000 but exclue the final batch (that is less than 1,000) from the MRR calculation.
 
  ## Primary Dataset
- Since we do not have a labeled dataset for semantic code search, we are using a proxy dataset that is a parallel corpus of (`comments`, `code`) to force code and natural language into the same vector space.  We paritition the data into train/validation/test splits such that code from the same repository can only exist in one partition.
+ Since we do not have a labeled dataset for semantic code search, we are using a proxy dataset that is a parallel corpus of (`comments`, `code`) to force code and natural language into the same vector space.  We paritition the data into train, validation and test splits such that code from the same repository can only exist in one partition.
  
  ## Auxilary Tests
  In order to guide our progress we also evaluate our model on external datasets that more closely resemble semantic search, as well as other tasks that test our ability to learn generalized representations of code.  Throughout the documentation, we refer to these as **Auxilary tests**.  An outline of these these tests are below:
