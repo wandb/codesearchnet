@@ -120,6 +120,8 @@ Data is stored in [jsonlines](http://jsonlines.org/) format.  Each line in the u
 - **hash_value:** the numeric hash value, used to split the data into train/valid/test sets.
 - **partition:** a flag indicating what partition this datum belongs to {train, valid, test, etc.} This is not used by the model.  Instead we rely on directory structure to denote the partition of the data.
 
+Code, comment and docstrings are extracted in a language-specific manner, removing artifacts of that language (e.g., XML comments in C#).
+
 ```{json}
 {
   "repo": "github/myrepo",
