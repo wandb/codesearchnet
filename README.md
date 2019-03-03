@@ -272,7 +272,7 @@ The shell script `/script/setup` will automatically download these files into th
 
 The s3 links follow this pattern:
 
-> https://s3.amazonaws.com/code-search-net/CodeSearchNet/{python,java,csharp}/{train, valid,test,holdout}.zip
+> https://s3.amazonaws.com/code-search-net/CodeSearchNet/{python,java,csharp}/{train,valid,test,holdout}.zip
 
 For example, the link for the `java` validation partition is:
 
