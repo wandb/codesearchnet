@@ -402,5 +402,10 @@ def compute_evaluation_metrics(model_path: RichPath, arguments,
 
     final_eval['Rosetta MRR'] = np.mean(rosetta_scores)
 
+    # Print summary metrics used for leaderboard.
+    print('====== Summary Evaluation Metrics ====== ')
+    for key in final_eval:
+        print(f'{key}: {final_eval[key]: .3f}')
+
     if wandb.run and final_eval:
         wandb.run.summary['Eval'] = final_eval
