@@ -100,30 +100,72 @@ By default models are saved in the `/resources/saved_models` folder of this repo
     Most people will want to this option as parsing all of the code from source can require a considerable amount of computation.  However, there may be an opportunity to parse, clean and transform the original data in new ways that can increase performance.  If you have run the setup steps above you will already have the pre-processed files, and nothing more needs to be done. The data will be available in `/resources/data` folder of this repository, with the [this directory structure](/resources/README.md).  You can read more about the format of the pre-processed data [here](src/docs/DATA_FORMAT.md).
 
 ## Pre-Processed Data Format
-Data is stored in gzipped [JSONL](http://jsonlines.org/) format.
-Each line in the uncompressed file represents one example (usually a function) in the
-following format:
-```json
+
+Data is stored in [jsonlines](http://jsonlines.org/) format.  Each line in the uncompressed file represents one example (usually a function with an associated comment). A prettified example of one row of this dataset is illustrated below.  Explanation of the keys are as follows:
+
+- **repo:** the owner/repo
+- **path:** the full path to the original file.
+- **lineno:** the lineno in the original file the function or method came from.
+- **func_name:** the function or method name
+- **original_string:** the raw string before tokenization or parsing.
+- **language:** the programming language.
+- **code:** the part of the `original_string` that is code.
+- **code_tokens:** tokenized version of `code`
+- **docstring:** the top level comment or docstring, if exists in the original string.
+- **docstring_tokens:** tokenized version of `docstring`.
+- **sha:** the field is not being used
+- **comment_tokens:** tokenized comments if they exist in the code.  This is not being used in the model at the moment. 
+- **doc_id:** this is a unique id for tracking data lineage.  Not used in the model.
+- **hash_key:** the value used to hash this datum (Only the part before the : is used).
+- **hash_value:** the numeric hash value, used to split the data into train/valid/test sets.
+- **partition:** a flag indicating what partition this datum belongs to {train, valid, test, etc.} This is not used by the model.  Instead we rely on directory structure to denote the partition of the data.
+
+```{json}
 {
-  "code": "a string with the original code segment",
-  "code_tokens": ["List", "of", "code", "tokens", ...],
-  "docstring": "the original string of code documentation (or other query) about the code",
-  "docstring_tokens": ["List", "of", "docstring", "tokens", ...],
-  "comment_tokens": ["List", "of", "tokens", "within", "comments", "but", "not", "the", "docstring", ...],
-  "language": "programming language name",
-  "repo": "user/project",
-  "path": "the/path/to/the/file/in/the/repo",
-  "lineno": 23,
-  "func_name": "NameOfFunction",
-  "sha": "Optional string containing the SHA of the repo when extracted"
+  "repo": "github/myrepo",
+  "path": "myrepo/some_code.py",
+  "lineno": 167,
+  "func_name": "country_list",
+  "original_string": "def country_list(cts):\n    \"\"\"countries for comparisons\"\"\"\n    ct_nlp = []\n    for i in cts.keys():\n        nlped = nlp(i)\n        ct_nlp.append(nlped)\n    return ct_nlp\n",
+  "language": "python",
+  "code": "def country_list(cts):\n    \"\"\"\"\"\"\n    ct_nlp = []\n    for i in cts.keys():\n        nlped = nlp(i)\n        ct_nlp.append(nlped)\n    return ct_nlp\n",
+  "code_tokens": [
+    "def",
+    "country_list",
+    "cts",
+    "\"\"\"\"\"\"",
+    "ct_nlp",
+    "for",
+    "i",
+    "in",
+    "cts",
+    "keys",
+    "nlped",
+    "nlp",
+    "i",
+    "ct_nlp",
+    "append",
+    "nlped",
+    "return",
+    "ct_nlp"
+  ],
+  "docstring": "countries for comparisons",
+  "docstring_tokens": [
+    "countries",
+    "for",
+    "comparisons"
+  ],
+  "sha": "",
+  "comment_tokens": [],
+  "doc_id": 162323,
+  "hash_key": "github/myrepo:myrepo/some_code.py",
+  "hash_val": 51889,
+  "partition": "test"
 }
 ```
-The `repo` field usually refers to a GitHub repo, the `path` field is the file from
-which the sample was extracted, and the `lineno` field is the first line in which the
-example appears.
-Code, comment and docstring are extracted in a language-specific manner, removing
-artifacts of that language (_e.g._, XML comments in C#).  A more detailed explanation of the data format is located in [here.](src/docs/DATA_FORMAT.md)
   
+  Furthermore, some summary statistics about the data such as row counts and token length histograms can be found in [this notebook](notebooks/ExploreData.ipynb)
+
   # Overview
 
   **CodeSearchNet** is a deep-learning based framework built on [TensorFlow](https://github.com/tensorflow/tensorflow) that we use to research the problem of code retrieval using natural language.  This research is a continuation of some ideas presented [here](https://githubengineering.com/towards-natural-language-semantic-code-search/) and is a joint collaboration between GitHub and the [Deep Program Understanding](https://www.microsoft.com/en-us/research/project/program/) group at [Microsoft Research - Cambridge](https://www.microsoft.com/en-us/research/lab/microsoft-research-cambridge/).
@@ -201,4 +243,3 @@ Container images built with this project include third party materials. See [THI
 - [Third Party Notice](src/docs/THIRD_PARTY_NOTICE.md)
 - [Guidelines on Contributing](src/docs/CONTRIBUTING.md)
 - [Instructions on Leaderboard Submissions](src/docs/LEADERBOARD.md)
-- [Explanation of Data Format](src/docs/DATA_FORMAT.md)
