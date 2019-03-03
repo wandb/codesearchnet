@@ -402,5 +402,18 @@ def compute_evaluation_metrics(model_path: RichPath, arguments,
 
     final_eval['Rosetta MRR'] = np.mean(rosetta_scores)
 
+    # Print summary metrics used for leaderboard.
+    auxilary_mrrs = []
+    print('====== Summary Evaluation Metrics ====== ')
+    for key in final_eval:
+        print(f'{key}: {final_eval[key]: .3f}')
+        if key != 'Primary MRR':
+            auxilary_mrrs.append(final_eval[key])
+    
+    mean_auxilary_mrr = np.mean(auxilary_mrrs)
+    final_eval['Mean Auxilary MRR'] = mean_auxilary_mrr
+    print(f'Mean Auxilary MRR: {mean_auxilary_mrr: .3f}')
+
+
     if wandb.run and final_eval:
         wandb.run.summary['Eval'] = final_eval
