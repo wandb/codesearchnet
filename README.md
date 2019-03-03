@@ -272,7 +272,7 @@ The shell script `/script/setup` will automatically download these files into th
 
 The s3 links follow this pattern:
 
-> https://s3.amazonaws.com/code-search-net/CodeSearchNet/`{python,java,csharp}`/`{train, valid,test,holdout}`.zip
+> https://s3.amazonaws.com/code-search-net/CodeSearchNet/{python,java,csharp}/{train, valid,test,holdout}.zip
 
 For example, the link for the `java` validation partition is:
 
@@ -283,7 +283,7 @@ For example, the link for the `java` validation partition is:
 
 You may desire to extract the data from source and parse, annotate, dedupe and partition the data yourself, instead of starting with the pre-processed version of the data.  Instructions on how to do this are located in the [dataextraction README](src/dataextraction/README.md).  This data consists of the csv file with two fields: **(1)** The full path (owner/repo/path) and **(2)** the raw string contents of the file. These csv files are filtered to only include paths only ending in relevant file extensions (`.py`, `.java` or `.cs`). This data is located in the following S3 bucket:
 
-> https://s3.amazonaws.com/code-search-net/CodeSearchNet/`{python,java,csharp}`/raw/
+> https://s3.amazonaws.com/code-search-net/CodeSearchNet/{python,java,csharp}/raw/
 
 Each bucket contains multi-part csv files, and there are a different number of csv files for each language.
 
