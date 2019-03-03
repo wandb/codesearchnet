@@ -21,7 +21,7 @@ if __name__ == '__main__':
         os.makedirs(destination_dir)
 
     for language in ('python', 'csharp', 'java'):
-        for split in ('train', 'valid', 'test'):
+        for split in ('train', 'valid', 'test', 'holdout'):
             language_dir = os.path.join(destination_dir, language, 'final', 'jsonl')
             if not os.path.exists(language_dir):
                 os.makedirs(language_dir)
