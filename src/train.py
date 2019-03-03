@@ -195,7 +195,7 @@ def run(arguments, tag_in_vcs=False) -> None:
     else:
         model_path = run_train(model_class, train_data_dirs, valid_data_dirs, save_folder, hyperparameters,
                                azure_info_path, run_name, arguments['--quiet'],
-                               max_files_per_dir=arguments.get('--max-files-per-dir'),
+                               max_files_per_dir=max_files_per_dir,
                                parallelize=not(arguments['--sequential']))
 
     wandb.config['best_model_path'] = str(model_path)
