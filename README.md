@@ -277,6 +277,9 @@ The filtered version of the raw data does not contain the full contents of the o
 
 `000000000000.csv` to `000000000499.csv`
 
+For example, the link for the first file is:
+
+> https://s3.amazonaws.com/code-search-net/CodeSearchNet/all/000000000000.csv
 
 ## License
 
