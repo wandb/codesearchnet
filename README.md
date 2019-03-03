@@ -41,6 +41,8 @@
 
       **The size of the datasets you will download (most of them compressed) have a combined size of only ~ 3.5 GB.**  The primary datset (described below) has approximately 3.2 million examples across train, validation and holdout partitions.
 
+      If you want to know more about the data, see the [Pre-processed data](#pre-processed-data) section below as well as [this notebook](notebooks/ExploreData.ipynb).
+
 
 ## Running The Model
 
@@ -191,7 +193,7 @@ Code, comment and docstrings are extracted in a language-specific manner, removi
 }
 ```
 
-  Furthermore, some summary statistics about the data such as row counts and token length histograms can be found in [this notebook](notebooks/ExploreData.ipynb)
+  Furthermore, summary statistics such as row counts and token length histograms can be found in [this notebook](notebooks/ExploreData.ipynb)
 
 # Overview
 
@@ -278,6 +280,8 @@ For example, the link for the `java` validation partition is:
 
 > https://s3.amazonaws.com/code-search-net/CodeSearchNet/java/valid.zip
 
+The size of the pre-processed dataset is 1.8 GB.
+
 
 ### Raw Data - Filtered
 
@@ -299,6 +303,7 @@ Note that Python only has 10 csv files, where Java and CSharp have 100 files eac
 
 > https://s3.amazonaws.com/code-search-net/CodeSearchNet/python/raw/000000000000.csv
 
+The size of the raw filtered dataset is 42 GB.
 
 ### Raw Data - Unfiltered
 
@@ -311,6 +316,8 @@ The filtered version of the raw data does not contain the full contents of the o
 For example, the link for the first file is:
 
 > https://s3.amazonaws.com/code-search-net/CodeSearchNet/all/000000000000.csv
+
+The size of the raw unfiltered dataset is 424 GB.
 
 # License
 
