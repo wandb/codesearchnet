@@ -13,8 +13,8 @@
 **/.ipynb_checkpoints/
 
 # data
-data/
-aux/
+resources/
+!resources/README.md
 !tests/data/
 *.csv
 
