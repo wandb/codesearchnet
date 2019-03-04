@@ -325,7 +325,7 @@ Here are related projects from the community that leverage these ideas.  PRs fea
 
 1. [Kubeflow](https://www.kubeflow.org/), [Code Search example](https://github.com/kubeflow/examples/tree/master/code_search).
 
-2. Repo recommendations using [idi-o-matic](https://github.com/mkbehbehani/idi-o-matic).
+2. Repository recommendations using [idi-o-matic](https://github.com/mkbehbehani/idi-o-matic).
 
 
 # License
