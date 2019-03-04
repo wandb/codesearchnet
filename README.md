@@ -31,7 +31,7 @@
 
   You should only have to perform the below setup steps once to download the data and prepare the environment.
 
-  1. Due to the complexity of installing all dependencies, we prepared Docker containers to run this code. You can find instructions on how to install Docker in the [official docs](https://docs.docker.com/get-started/).  Additionally, you must install [Nvidia-Docker](https://github.com/NVIDIA/nvidia-docker) to satisfy GPU-compute related dependencies.  For those completely unfamiliar with Docker, [here](https://towardsdatascience.com/how-docker-can-help-you-become-a-more-effective-data-scientist-7fc048ef91d5) is a gentle introduction for data scientists.
+  1. Due to the complexity of installing all dependencies, we prepared Docker containers to run this code. You can find instructions on how to install Docker in the [official docs](https://docs.docker.com/get-started/).  Additionally, you must install [Nvidia-Docker](https://github.com/NVIDIA/nvidia-docker) to satisfy GPU-compute related dependencies.  For those completely unfamiliar with Docker, this [blog post](https://towardsdatascience.com/how-docker-can-help-you-become-a-more-effective-data-scientist-7fc048ef91d5) provides a gentle introduction for data scientists.
 
   2. After installing Docker, you need to download the pre-processed datasets, which are hosted on S3.  You can do this by running `script/setup`.
 
@@ -264,7 +264,7 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
 
  2. Obtain a pre-processed dataset.  (Recommended)
 
-    Most people will want to pursue this option as parsing all of the code from source can require a considerable amount of computation.  However, there may be an opportunity to parse, clean and transform the original data in new ways that can increase performance.  If you have run the setup steps above you will already have the pre-processed files, and nothing more needs to be done. The data will be available in the `/resources/data` folder of this repository, with [this directory structure](/resources/README.md).  You can read more about the format of the pre-processed data [here](#pre-processed-data-format).
+    Most people will want to pursue this option as parsing all of the code from source can require a considerable amount of computation.  However, there may be an opportunity to parse, clean and transform the original data in new ways that can increase performance.  If you have run the setup steps above you will already have the pre-processed files, and nothing more needs to be done. The data will be available in the `/resources/data` folder of this repository, withp [this directory structure](/resources/README.md).  You can read more about the format of the pre-processed data [here](#pre-processed-data-format).
 
 ## (Optional) Downloading Datasets From S3
 
@@ -318,6 +318,15 @@ For example, the link for the first file is:
 > https://s3.amazonaws.com/code-search-net/CodeSearchNet/all/000000000000.csv
 
 The size of the raw unfiltered dataset is 424 GB.
+
+# Related Projects
+
+Here are related projects from the community that leverage these ideas.  PRs featuring other projects are welcome!
+
+1. [Kubeflow](https://www.kubeflow.org/), [Code Search example](https://github.com/kubeflow/examples/tree/master/code_search).
+
+2. Repository recommendations using [idi-o-matic](https://github.com/mkbehbehani/idi-o-matic).
+
 
 # License
 
