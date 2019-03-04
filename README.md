@@ -33,13 +33,13 @@
 
   1. Due to the complexity of installing all dependencies, we prepared Docker containers to run this code. You can find instructions on how to install Docker in the [official docs](https://docs.docker.com/get-started/).  Additionally, you must install [Nvidia-Docker](https://github.com/NVIDIA/nvidia-docker) to satisfy GPU-compute related dependencies.  For those completely unfamiliar with Docker, [here](https://towardsdatascience.com/how-docker-can-help-you-become-a-more-effective-data-scientist-7fc048ef91d5) is a gentle introduction for data scientists.
 
-  2. After installing Docker, you need to download the pre-processed datsets, which are hosted on S3.  You can do this by running `script/setup`.
+  2. After installing Docker, you need to download the pre-processed datasets, which are hosted on S3.  You can do this by running `script/setup`.
 
       > script/setup
 
       This will first build the required containers and then download the primary and auxilary datasets described below. The data is downloaded into the `resources/data/` folder and will result in the directory structure described [here](resources/README.md).
 
-      **The size of the datasets you will download (most of them compressed) have a combined size of only ~ 3.5 GB.**  The primary datset (described below) has approximately 3.2 million examples across train, validation and holdout partitions.
+      **The size of the datasets you will download (most of them compressed) have a combined size of only ~ 3.5 GB.**  The primary dataset (described below) has approximately 3.2 million examples across train, validation and holdout partitions.
 
       If you want to know more about the data, see the [Pre-processed data](#pre-processed-data) section below as well as [this notebook](notebooks/ExploreData.ipynb).
 
@@ -71,7 +71,7 @@
     python train.py --model neuralbow
     ```
 
-    The above command will assume default values for the location(s) of the training data and a destination where would like to save the model.  The default location for training data is specified in `/src/data_dirs_{train,valid,test}.txt`.  These files contain a list of paths where the data exists.  In the case that there is more than one path specified (seperated by a newline), then the data from all the paths will be concatenated together.  For example, this is the content of `src/data_dirs_train.txt`:
+    The above command will assume default values for the location(s) of the training data and a destination where would like to save the model.  The default location for training data is specified in `/src/data_dirs_{train,valid,test}.txt`.  These files contain a list of paths where the data exists.  In the case that there is more than one path specified (separated by a newline), then the data from all the paths will be concatenated together.  For example, this is the content of `src/data_dirs_train.txt`:
 
     ```
     $ cat data_dirs_train.txt
@@ -99,7 +99,6 @@
 
 By default models are saved in the `/resources/saved_models` folder of this repository, but this can be overridden.
 
-
 ## Optional: WandB Setup
 
  First, initialize WandB:
@@ -124,7 +123,7 @@ By default models are saved in the `/resources/saved_models` folder of this repo
 
 The metric we use for evaluation is [Mean Reciprocal Rank](https://en.wikipedia.org/wiki/Mean_reciprocal_rank).  For the MRR calculation, we use 1,000 distractors constructed from negative samples within the batch at evaluation time (this means the batch size at evaluation time is also 1,000).  
 
-For example, consider a dataset of 10,000 (`comment`, `code`)  pairs. We set the batch size at evaluation time (during inference, not training) to be 1,000.  For every (`comment`, `code`) pair in the batch, we evaluate the our ability to retrieve code using the comment (using a distance metric of our choice, ex: cosine distance) using the rest of examples in the batch as distractors.  We then average the MRR across all of the batches to compute MRR for the dataset.  In the case where the number of records in the dataset is not divisible by 1,000, we still construct batches of size 1,000 but exclue the final batch (that is less than 1,000) from the MRR calculation.
+For example, consider a dataset of 10,000 (`comment`, `code`)  pairs. We set the batch size at evaluation time (during inference, not training) to be 1,000.  For every (`comment`, `code`) pair in the batch, we evaluate the our ability to retrieve code using the comment (using a distance metric of our choice, ex: cosine distance) using the rest of examples in the batch as distractors.  We then average the MRR across all of the batches to compute MRR for the dataset.  In the case where the number of records in the dataset is not divisible by 1,000, we still construct batches of size 1,000 but exclude the final batch (that is less than 1,000) from the MRR calculation.
 
 # Pre-Processed Data Format
 
@@ -199,7 +198,6 @@ Code, comment and docstrings are extracted in a language-specific manner, removi
 
   **CodeSearchNet** is a deep-learning based framework built on [TensorFlow](https://github.com/tensorflow/tensorflow) that we use to research the problem of code retrieval using natural language.  This research is a continuation of some ideas presented [here](https://githubengineering.com/towards-natural-language-semantic-code-search/) and is a joint collaboration between GitHub and the [Deep Program Understanding](https://www.microsoft.com/en-us/research/project/program/) group at [Microsoft Research - Cambridge](https://www.microsoft.com/en-us/research/lab/microsoft-research-cambridge/).
 
-
   The goals of this repository are to provide the community with the following:
 
   1. Instructions on how to obtain large corpora of data for research on this problem.
@@ -215,17 +213,20 @@ More context regarding the motivation for this problem is in our blog post [TODO
 
  ![alt text](images/architecture.png "Architecture")
 
- - This model ingests a parallel corpus of (`comments`, `code`) and learns to retrieve a code snippet given a natural language query.  Specifically, `comments` are top-level function and method comments (ex: in Python called docstrings), and `code` is either an entire function or method. Throughout this repo, we refer to the terms docstring and query interchangibly.
+ - This model ingests a parallel corpus of (`comments`, `code`) and learns to retrieve a code snippet given a natural language query.  Specifically, `comments` are top-level function and method comments (ex: in Python called docstrings), and `code` is either an entire function or method. Throughout this repo, we refer to the terms docstring and query interchangeably.
  - The query has a single encoder, whereas each programming language has its own encoder (our initial release has three languages: Python, Java, and C#).
  - Encoders available are: Neural-Bag-Of-Words, RNN, 1D-CNN, Self-Attention (BERT), and a 1D-CNN+Self-Attention Hybrid.
 
 ## Primary Dataset
- Since we do not have a labeled dataset for semantic code search, we are using a proxy dataset that is a parallel corpus of (`comments`, `code`) to force code and natural language into the same vector space.  We paritition the data into train, validation and test splits such that code from the same repository can only exist in one partition.
+
+ Since we do not have a labeled dataset for semantic code search, we are using a proxy dataset that is a parallel corpus of (`comments`, `code`) to force code and natural language into the same vector space.  We partition the data into train, validation and test splits such that code from the same repository can only exist in one partition.
 
 ## Auxilary Tests
+
  In order to guide our progress we also evaluate our model on external datasets that more closely resemble semantic search, as well as other tasks that test our ability to learn generalized representations of code.  Throughout the documentation, we refer to these as **Auxilary tests**.  An outline of these these tests are below:
 
 ### Search Auxilary Tests
+
 These tests use datasets that might more closely resemble natural language searches for code.
 
 1. [CoNala](https://conala-corpus.github.io/): Curated Stack Overflow data that is human-labeled with intent.  From this we construct a parallel corpus of (code, intent).
@@ -238,7 +239,7 @@ These tests use datasets that might more closely resemble natural language searc
   1. **Function Name Prediction:**  we use our primary dataset and construct a task that attempts to retrieve the body of a function or method given the function or method name.
   2. [Rosetta Code](http://www.rosettacode.org/wiki/Rosetta_Code): We use data from this site to construct several parallel corpora containing pairs of code that accomplish the same task from the Python, C#, and Java programming languages.  We use this parallel corpus to see if we can retrieve code in a different programming language that matches the given one.  For example, given a snippet of Python code, we evaluate how well the representations learned by our model can retrieve code in Java or C# that accomplishes the same task.
 
-##  Leaderboard
+## Leaderboard
 
 The current leaderboard for this project can be seen below.  
 
@@ -247,20 +248,19 @@ The current leaderboard for this project can be seen below.
 GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|Neural Bag of Words (cosine loss) |0.662|**0.419**|**0.259**|**0.168**|**0.123**
 GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1DCNN+SelfAttention|**0.757**|0.416|0.135|0.106|0.054
 
-
  We encourage the community to beat these baselines and submit a PR including your new benchmark in the above leaderboard. Please see these [instructions for submitting to the leaderboard](src/docs/LEADERBOARD.md).  Some requirements for submission to this leaderboard:  
 
   - Results must be reproducible with clear instructions.
   - Code must be open sourced and clearly licensed.
   - Model must demonstrate an improvement on at least one of the auxilary tests.
 
- You may notice that we have provided links in the **Notes** section of the leaderboard to a dashboard that shows detailed logging of our training and evaluation metrics, as well as  model artifacts for increased transperency.  We are utlizing [Weights & Biases](https://www.wandb.com/) (WandB), which is free for open-source projects.  While logging your models on this system is optional, we encourage participants who want to be included on this leaderboard to provide as much transperency as possible.
+ You may notice that we have provided links in the **Notes** section of the leaderboard to a dashboard that shows detailed logging of our training and evaluation metrics, as well as  model artifacts for increased transparency.  We are utilizing [Weights & Biases](https://www.wandb.com/) (WandB), which is free for open-source projects.  While logging your models on this system is optional, we encourage participants who want to be included on this leaderboard to provide as much transparency as possible.
 
 # Obtaining The Data
 
  There are several options for acquiring the data.  
 
- 1. Extract the data from source and parse, annotate, and dedupe the data.  To do this, see the [dataextraction README](src/dataextraction/README.md).
+ 1. Extract the data from source and parse, annotate, and deduplicate the data.  To do this, see the [dataextraction README](src/dataextraction/README.md).
 
  2. Obtain a pre-processed dataset.  (Recommended)
 
@@ -285,7 +285,7 @@ The size of the pre-processed dataset is 1.8 GB.
 
 ### Raw Data - Filtered
 
-You may desire to extract the data from source and parse, annotate, dedupe and partition the data yourself, instead of starting with the pre-processed version of the data.  Instructions on how to do this are located in the [dataextraction README](src/dataextraction/README.md).  This data consists of the csv file with two fields: **(1)** The full path (owner/repo/path) and **(2)** the raw string contents of the file. These csv files are filtered to only include paths only ending in relevant file extensions (`.py`, `.java` or `.cs`). This data is located in the following S3 bucket:
+You may desire to extract the data from source and parse, annotate, deduplicate and partition the data yourself, instead of starting with the pre-processed version of the data.  Instructions on how to do this are located in the [dataextraction README](src/dataextraction/README.md).  This data consists of the csv file with two fields: **(1)** The full path (owner/repo/path) and **(2)** the raw string contents of the file. These csv files are filtered to only include paths only ending in relevant file extensions (`.py`, `.java` or `.cs`). This data is located in the following S3 bucket:
 
 > https://s3.amazonaws.com/code-search-net/CodeSearchNet/{python,java,csharp}/raw/
 
