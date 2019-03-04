@@ -323,7 +323,7 @@ The size of the raw unfiltered dataset is 424 GB.
 
 Here are related projects from the community that leverage these ideas.  PRs featuring other projects are welcome!
 
-1. Kubeflow, [Code Search example](https://github.com/kubeflow/examples/tree/master/code_search).
+1. [Kubeflow](https://www.kubeflow.org/), [Code Search example](https://github.com/kubeflow/examples/tree/master/code_search).
 
 2. Repo recommendations using [idi-o-matic](https://github.com/mkbehbehani/idi-o-matic).
 
