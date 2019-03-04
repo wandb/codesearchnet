@@ -85,7 +85,7 @@
 
   * Training a 1D-CNN model on C# data only:
     ```
-    python train.py --model 1dcnn /trained_models ..resources/data/csharp/final/jsonl/train ..resources/data/csharp/final/jsonl/valid ..resources/data/csharp/final/jsonl/test
+    python train.py --model 1dcnn /trained_models ../resources/data/csharp/final/jsonl/train ../resources/data/csharp/final/jsonl/valid ../resources/data/csharp/final/jsonl/test
     ```
 
     The above command overrides the default locations for saving the model to `trained_models` and also overrides the source of the train, validation, and test sets.
@@ -114,11 +114,6 @@ By default models are saved in the `/resources/saved_models` folder of this repo
 
    3. You will be asked for your api key, which is shown on your [WandB profile page](https://app.wandb.ai/profile).
 
-   4. Finally, initialize your WandB environment:
-
-      ```
-      $ wandb init
- 	    ```
 
 # Evaluation
 
