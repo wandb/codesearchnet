@@ -22,5 +22,6 @@ resources/
 *.ftpconfig
 
 .idea
-/src/wandb
+/src/wandb/run-*
+/src/wandb/debug.log
 *.html
