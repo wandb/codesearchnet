@@ -4,7 +4,7 @@
 
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
-- [Initial Setup & Downloading Datasets](#initial-setup-downloading-datasets)
+- [Initial Setup & Downloading Datasets](#initial-setup--downloading-datasets)
 	- [Running The Model](#running-the-model)
 	- [Saving Models](#saving-models)
 	- [Optional: WandB Setup](#optional-wandb-setup)
@@ -20,8 +20,8 @@
 - [Obtaining The Data](#obtaining-the-data)
 	- [(Optional) Downloading Datasets From S3](#optional-downloading-datasets-from-s3)
 		- [Pre-processed data](#pre-processed-data)
-		- [Raw Data - Filtered](#raw-data-filtered)
-		- [Raw Data - Unfiltered](#raw-data-unfiltered)
+		- [Raw Data - Filtered](#raw-data---filtered)
+		- [Raw Data - Unfiltered](#raw-data---unfiltered)
 - [License](#license)
 - [Important Documents](#important-documents)
 
