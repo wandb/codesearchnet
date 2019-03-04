@@ -264,7 +264,7 @@ GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1
 
  2. Obtain a pre-processed dataset.  (Recommended)
 
-    Most people will want to pursue this option as parsing all of the code from source can require a considerable amount of computation.  However, there may be an opportunity to parse, clean and transform the original data in new ways that can increase performance.  If you have run the setup steps above you will already have the pre-processed files, and nothing more needs to be done. The data will be available in the `/resources/data` folder of this repository, with the [this directory structure](/resources/README.md).  You can read more about the format of the pre-processed data [here](src/docs/DATA_FORMAT.md).
+    Most people will want to pursue this option as parsing all of the code from source can require a considerable amount of computation.  However, there may be an opportunity to parse, clean and transform the original data in new ways that can increase performance.  If you have run the setup steps above you will already have the pre-processed files, and nothing more needs to be done. The data will be available in the `/resources/data` folder of this repository, with [this directory structure](/resources/README.md).  You can read more about the format of the pre-processed data [here](#pre-processed-data-format).
 
 ## (Optional) Downloading Datasets From S3
 
