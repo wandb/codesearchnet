@@ -2,6 +2,7 @@
 
 **Table of Contents**
 
+TODO: how to update this for the new readme structure?
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Introduction](#introduction)
@@ -195,7 +196,7 @@ Additional notes:
 
 ## Preprocessed Data Format
 
-TODO: consdier moving this to a nested readme?
+TODO: consdier moving this to a separate readme on data structure/format/directory structure?
 Data is stored in [jsonlines](http://jsonlines.org/) format.  Each line in the uncompressed file represents one example (usually a function with an associated comment). A prettified example of one row is illustrated below.
 
 - **repo:** the owner/repo
