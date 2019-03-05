@@ -46,53 +46,53 @@ More context regarding the motivation for this problem is in our blog post [TODO
 
 ## Data
 
-The primary dataset consists of 3.2 million pairs of (`comments`, `code`). Since we do not have labeled examples for semantic code search, we use this proxy, parallel corpus of (`comments`, `code`) to force code and natural language into the same vector space.  We partition the data into train, validation, and test splits such that code from the same repository can only exist in one partition. Currently this is the only dataset on which we train our model. TODO: how many examples in each official partition of the dataset (train, val, test)?
+  The primary dataset consists of 3.2 million pairs of (`comments`, `code`). Since we do not have labeled examples for semantic code search, we use this proxy, parallel corpus of (`comments`, `code`) to force code and natural language into the same vector space.  We partition the data into train, validation, and test splits such that code from the same repository can only exist in one partition. Currently this is the only dataset on which we train our model. TODO: how many examples in each official partition of the dataset (train, val, test)?
 
-We use three additional datasets for evaluation only (not for training).  TODO: how many examples are in each one?
+  We use three additional datasets for evaluation only (not for training).  TODO: how many examples are in each one?
 
-1. [CoNala](https://conala-corpus.github.io/): curated Stack Overflow data that is human-labeled with intent.  From this we construct a parallel corpus of (code, intent). 
+  1. [CoNala](https://conala-corpus.github.io/): curated Stack Overflow data that is human-labeled with intent.  From this we construct a parallel corpus of (code, intent). 
 
-2. [StaQC](http://web.cse.ohio-state.edu/~sun.397/docs/StaQC-www18.pdf): another dataset manually curated from Stack Overflow with (code, question) pairs
+  2. [StaQC](http://web.cse.ohio-state.edu/~sun.397/docs/StaQC-www18.pdf): another dataset manually curated from Stack Overflow with (code, question) pairs
 
-3. [Rosetta Code](http://www.rosettacode.org/wiki/Rosetta_Code): We use data from this site to construct several parallel corpora containing pairs of code snippets that accomplish the same task in Python, C#, or Java. 
+  3. [Rosetta Code](http://www.rosettacode.org/wiki/Rosetta_Code): We use data from this site to construct several parallel corpora containing pairs of code snippets that accomplish the same task in Python, C#, or Java. 
 
 ## Network Architecture
 
-This model ingests a parallel corpus of (`comments`, `code`) and learns to retrieve a code snippet given a natural language query.  Specifically, `comments` are top-level function and method comments (e.g. docstrings in Python), and `code` is an entire function or method. Throughout this repo, we refer to the terms docstring and query interchangeably.
+  This model ingests a parallel corpus of (`comments`, `code`) and learns to retrieve a code snippet given a natural language query.  Specifically, `comments` are top-level function and method comments (e.g. docstrings in Python), and `code` is an entire function or method. Throughout this repo, we refer to the terms docstring and query interchangeably.
 
-The query has a single encoder, whereas each programming language has its own encoder (our initial release has three languages: Python, Java, and C#).
-Available encoders: Neural-Bag-Of-Words, RNN, 1D-CNN, Self-Attention (BERT), 1D-CNN+Self-Attention Hybrid
+  The query has a single encoder, whereas each programming language has its own encoder (our initial release has three languages: Python, Java, and C#).
+  Available encoders: Neural-Bag-Of-Words, RNN, 1D-CNN, Self-Attention (BERT), 1D-CNN+Self-Attention Hybrid
 
-![alt text](images/architecture.png "Architecture")
+  ![alt text](images/architecture.png "Architecture")
 
 ## Evaluation
 
-The metric we use for evaluation is [Mean Reciprocal Rank](https://en.wikipedia.org/wiki/Mean_reciprocal_rank)--this is the average of the reciprocal of the rank of the correct answer for each query (i.e. 1 for first place, 1/2 for second place, 1/3 for third, etc).  To calculate MRR, we use distractors from negative samples within a batch at evaluation time (with batch size 1,000). For example, consider a dataset of 10,000 (`comment`, `code`)  pairs. For every (`comment`, `code`) pair in the batch of 1,000, we use the comment as to retrieve the code, with all the other code snippets in the batch serving as distractors. We score this retrieval using a distance metric of our choice, e.g. cosine distance. TODO: provide more detail--use cosine distance/other metric how?  We then average the MRR across all batches to compute MRR for the dataset.  If the dataset is not evenly divisible by 1,000, we exclude the final batch (any remainder that is less than 1,000) from the MRR calculation.
+  The metric we use for evaluation is [Mean Reciprocal Rank](https://en.wikipedia.org/wiki/Mean_reciprocal_rank)--this is the average of the reciprocal of the rank of the correct answer for each query (i.e. 1 for first place, 1/2 for second place, 1/3 for third, etc).  To calculate MRR, we use distractors from negative samples within a batch at evaluation time (with batch size 1,000). For example, consider a dataset of 10,000 (`comment`, `code`)  pairs. For every (`comment`, `code`) pair in the batch of 1,000, we use the comment as to retrieve the code, with all the other code snippets in the batch serving as distractors. We score this retrieval using a distance metric of our choice, e.g. cosine distance. TODO: provide more detail--use cosine distance/other metric how?  We then average the MRR across all batches to compute MRR for the dataset.  If the dataset is not evenly divisible by 1,000, we exclude the final batch (any remainder that is less than 1,000) from the MRR calculation.
 
-We also evaluate our model on external datasets that more closely resemble semantic search and test our ability to learn generalized representations of code.  Throughout the documentation, we refer to these as **Auxiliary tests**.
+  We also evaluate our model on external datasets that more closely resemble semantic search and test our ability to learn generalized representations of code.  Throughout the documentation, we refer to these as **Auxiliary tests**.
 
-1. **Function Name Prediction:**: Using our primary dataset, we train to retrieve the body of a function or method given a function or method name.
+  1. **Function Name Prediction:**: Using our primary dataset, we train to retrieve the body of a function or method given a function or method name.
 
-2. [CoNala](https://conala-corpus.github.io/): given a parallel corpus of (code, intent) pairs from Stack Overflow, retrieve code relevant to the query
+  2. [CoNala](https://conala-corpus.github.io/): given a parallel corpus of (code, intent) pairs from Stack Overflow, retrieve code relevant to the query
 
-3. [StaQC](http://web.cse.ohio-state.edu/~sun.397/docs/StaQC-www18.pdf): given a parallel corpus of (code, question) pairs from Stack Overflow, retrieve code relevant to the query
+  3. [StaQC](http://web.cse.ohio-state.edu/~sun.397/docs/StaQC-www18.pdf): given a parallel corpus of (code, question) pairs from Stack Overflow, retrieve code relevant to the query
 
-4. [Rosetta Code](http://www.rosettacode.org/wiki/Rosetta_Code): We use this parallel corpus to match code snippets across programming languages: given a snippet of Python code, retrieve code in Java or C# that accomplishes the same task.
+  4. [Rosetta Code](http://www.rosettacode.org/wiki/Rosetta_Code): We use this parallel corpus to match code snippets across programming languages: given a snippet of Python code, retrieve code in Java or C# that accomplishes the same task.
 
 ## Leaderboard
 
-We are using a leaderboard for this project to encourage collaboration and improve reproducibility.  It is hosted by [Weights & Biases](https://www.wandb.com/) (W&B), which is free for open-source projects.  Our entries in the leaderboard link to detailed logs of our training and evaluation metrics, as well as model artifacts.  While logging your models on this system is optional, we encourage participants who want to be included on this leaderboard to provide as much transparency as possible. Here is the current leaderboard: 
+  We are using a leaderboard for this project to encourage collaboration and improve reproducibility.  It is hosted by [Weights & Biases](https://www.wandb.com/) (W&B), which is free for open-source projects.  Our entries in the leaderboard link to detailed logs of our training and evaluation metrics, as well as model artifacts.  While logging your models on this system is optional, we encourage participants who want to be included on this leaderboard to provide as much transparency as possible. Here is the current leaderboard: 
 
-**Authors**|**GitHub Repo**|**Notes**|**Primary Dataset MRR**|**FuncName MRR**|**CoNaLa MRR**|**StaQC MRR**|**Rosetta MRR**
-:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:
-GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|Neural Bag of Words (cosine loss) |0.662|**0.419**|**0.259**|**0.168**|**0.123**
-GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1DCNN+SelfAttention|**0.757**|0.416|0.135|0.106|0.054
+  **Authors**|**GitHub Repo**|**Notes**|**Primary Dataset MRR**|**FuncName MRR**|**CoNaLa MRR**|**StaQC MRR**|**Rosetta MRR**
+  :-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:
+  GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|Neural Bag of Words (cosine loss) |0.662|**0.419**|**0.259**|**0.168**|**0.123**
+  GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1DCNN+SelfAttention|**0.757**|0.416|0.135|0.106|0.054
 
- We encourage the community to improve on these baselines by submitting PRs with your new benchmarks. Please see these [instructions for submitting to the leaderboard](src/docs/LEADERBOARD.md).  Some requirements for submission:  
+  We encourage the community to improve on these baselines by submitting PRs with your new benchmarks. Please see these [instructions for submitting to the leaderboard](src/docs/LEADERBOARD.md).  Some requirements for submission:  
 
-  - Results must be reproducible with clear instructions.
-  - Code must be open sourced and clearly licensed.
-  - Model must demonstrate an improvement on at least one of the auxiliary tests.
+    - Results must be reproducible with clear instructions.
+    - Code must be open sourced and clearly licensed.
+    - Model must demonstrate an improvement on at least one of the auxiliary tests.
 
 # Running the Baseline Model
 
@@ -339,7 +339,7 @@ Here are instructions for [contributing to this project](src/docs/CODE_OF_CONDUC
 
 This project is released under the [MIT License](LICENSE).
 
-Container images built with this project include third party materials. See [THIRD_PARTY_NOTICE.md](src/docs/THIRD_PARTY_NOTICE.md) for details.
+Container images built with this project include third party materials. See the [third party notice](src/docs/THIRD_PARTY_NOTICE.md) for details.
 
 ## Important Documents
 
