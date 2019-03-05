@@ -58,11 +58,12 @@ More context regarding the motivation for this problem is in our blog post [TODO
 
 ## Network Architecture
 
- - This model ingests a parallel corpus of (`comments`, `code`) and learns to retrieve a code snippet given a natural language query.  Specifically, `comments` are top-level function and method comments (e.g. docstrings in Python), and `code` is an entire function or method. Throughout this repo, we refer to the terms docstring and query interchangeably.
- - The query has a single encoder, whereas each programming language has its own encoder (our initial release has three languages: Python, Java, and C#).
- - Available encoders: Neural-Bag-Of-Words, RNN, 1D-CNN, Self-Attention (BERT), 1D-CNN+Self-Attention Hybrid
+This model ingests a parallel corpus of (`comments`, `code`) and learns to retrieve a code snippet given a natural language query.  Specifically, `comments` are top-level function and method comments (e.g. docstrings in Python), and `code` is an entire function or method. Throughout this repo, we refer to the terms docstring and query interchangeably.
 
- ![alt text](images/architecture.png "Architecture")
+The query has a single encoder, whereas each programming language has its own encoder (our initial release has three languages: Python, Java, and C#).
+Available encoders: Neural-Bag-Of-Words, RNN, 1D-CNN, Self-Attention (BERT), 1D-CNN+Self-Attention Hybrid
+
+![alt text](images/architecture.png "Architecture")
 
 ## Evaluation
 
