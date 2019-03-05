@@ -28,4 +28,4 @@ considering are meaningful. Concretely, we use the following rules:
 
 ## Pre-Processed Data Format
 
-This is described in the [main README](README.md#pre-processed-data-format).
+This is described in the [main README](/README.md#pre-processed-data-format).
