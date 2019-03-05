@@ -16,7 +16,7 @@
   - [W&B Setup](#w&b-setup)
 - [Data Details](#data-details)
   - [Data Acquisition](#data-acquisition)
-  - [Pre-Processed Data Format](#pre-processed-data-format)
+  - [Preprocessed Data Format](#preprocessed-data-format)
 	- [(Optional) Downloading Datasets from S3](#optional-downloading-datasets-from-s3)
 		- [Preprocessed data](#preprocessed-data)
 		- [Raw Data - Filtered](#raw-data---filtered)
@@ -46,9 +46,9 @@ More context regarding the motivation for this problem is in our blog post [TODO
 
 ## Data
 
- The primary dataset consists of 3.2 million pairs of (`comments`, `code`). Since we do not have labeled examples for semantic code search, we use this proxy, parallel corpus of (`comments`, `code`) to force code and natural language into the same vector space.  We partition the data into train, validation, and test splits such that code from the same repository can only exist in one partition. Currently this is the only dataset on which we train our model. TODO: how many examples in each official partition of the dataset (train, val, test)?
- 
- We use three additional datasets for evaluation only (not for training).  TODO: how many examples are in each one?
+The primary dataset consists of 3.2 million pairs of (`comments`, `code`). Since we do not have labeled examples for semantic code search, we use this proxy, parallel corpus of (`comments`, `code`) to force code and natural language into the same vector space.  We partition the data into train, validation, and test splits such that code from the same repository can only exist in one partition. Currently this is the only dataset on which we train our model. TODO: how many examples in each official partition of the dataset (train, val, test)?
+
+We use three additional datasets for evaluation only (not for training).  TODO: how many examples are in each one?
 
 1. [CoNala](https://conala-corpus.github.io/): curated Stack Overflow data that is human-labeled with intent.  From this we construct a parallel corpus of (code, intent). 
 
