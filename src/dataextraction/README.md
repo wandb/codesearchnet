@@ -14,7 +14,7 @@ To extract the data:
 For all languages, we do some filtering of data to ensure that the samples we are
 considering are meaningful. Concretely, we use the following rules:
 
-* Methods with no documentation are removed..
+* Methods with no documentation are removed.
 * Functions that are less than 3 lines long are removed. This removes interface  
   declarations, short methods, getters/setters and unimplemented methods.
 * Functions with less than 3 tokens in their documentation are removed. If easily
