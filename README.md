@@ -65,13 +65,9 @@ More context regarding the motivation for this problem is in our blog post [TODO
 
 ## Evaluation
 
-<<<<<<< Updated upstream
-  The metric we use for evaluation is [Mean Reciprocal Rank](https://en.wikipedia.org/wiki/Mean_reciprocal_rank)--this is the average of the reciprocal of the rank of the correct answer for each query (i.e. 1 for first place, 1/2 for second place, 1/3 for third, etc).  To calculate MRR, we use distractors from negative samples within a batch at evaluation time (with batch size 1,000). For example, consider a dataset of 10,000 (`comment`, `code`)  pairs. For every (`comment`, `code`) pair in the batch of 1,000, we use the comment as to retrieve the code, with all the other code snippets in the batch serving as distractors. We score this retrieval using a distance metric of our choice, e.g. cosine distance. TODO: provide more detail--use cosine distance/other metric how?  We then average the MRR across all batches to compute MRR for the dataset.  If the dataset is not evenly divisible by 1,000, we exclude the final batch (any remainder that is less than 1,000) from the MRR calculation.
-=======
   The metric we use for evaluation is [Mean Reciprocal Rank](https://en.wikipedia.org/wiki/Mean_reciprocal_rank)&mdash;this is the average of the reciprocal of the rank of the correct answer for each query (i.e. 1 for first place, 1/2 for second place, 1/3 for third, etc).  To calculate MRR, we use distractors from negative samples within a batch at evaluation time, with a fixed batch size of 1,000 (Note: we fix the batch size to 1,000 at evaluation time to standardize the MRR calculation, and do not do this at training time.)
     
   For example, consider a dataset of 10,005 (`comment`, `code`)  pairs. For every (`comment`, `code`) pair in each of the 10 batches (we exclude the remaining 5 examples), we use the comment to retrieve the code, with all the other code snippets in the batch serving as distractors. We score this retrieval using a distance metric of our choice (default: cosine distance)&mdash;that is, we compute the distance in our embedding between the representation of the query and the representation of each of the 1,000 code snippets and sort the resulting 1,000 distances such that the code snippet closest to the query in our model is ranked first. We then average the MRR across all 10 batches to compute MRR for the dataset.  If the dataset is not divisible by 1,000, we exclude the final batch (any remainder that is less than 1,000) from the MRR calculation.
->>>>>>> Stashed changes
 
   We also evaluate our model on external datasets that more closely resemble semantic search and test our ability to learn generalized representations of code.  Throughout the documentation, we refer to these as **Auxiliary tests**.
 
@@ -94,11 +90,6 @@ More context regarding the motivation for this problem is in our blog post [TODO
 
   We invite the community to improve on these baselines by submitting PRs with your new performance metrics.  TODO: how does the PR/submission flow interact between W&B leaderboard and this version? Please see these [instructions for submitting to the benchmark](src/docs/BENCHMARK.md).  Some requirements for submission:  
 
-<<<<<<< Updated upstream
-    - Results must be reproducible with clear instructions.
-    - Code must be open sourced and clearly licensed.
-    - Model must demonstrate an improvement on at least one of the auxiliary tests.
-=======
   1. Results must be reproducible with clear instructions.
   2. Code must be open sourced and clearly licensed.
   3. Model must demonstrate an improvement on at least one of the auxiliary tests.
@@ -108,7 +99,6 @@ More context regarding the motivation for this problem is in our blog post [TODO
   We are excited to offer the community useful tools&mdash;datasets, baseline models, and a collaboration forum via the Weights & Biases benchmark (TODO: link to active benchmark)&mdash;for the challenging research tasks of learning representations of code and code retrieval using natural language.  We encourage you to contribute by improving on our baseline models, sharing your insights and ideas with others as you work on this project, and [submitting your results to the collaborative benchmark](src/docs/BENCHMARK.md).
   
   We anticipate that the community will design custom architectures and use frameworks other than Tensorflow.  Furthermore, we anticipate that additional datasets will be useful.  It is not our intention to integrate these models, approaches, and datasets into this repository as a superset of all available ideas.  Rather, we intend to maintain the baseline models and a central place of reference with links to related repositories from the community.  TODO: link and description of W&B discussion forum?  For this repository in particular, we are accepting PRs that update the documentation, link to your project(s) with improved benchmarks, fix bugs, or make minor improvements to the code.  Here are [more specific guidelines for contributing to this repository](src/docs/CONTRIBUTING.md).  Please open an issue if you are unsure of the best course of action.  
->>>>>>> Stashed changes
 
 # Running the Baseline Model
 
