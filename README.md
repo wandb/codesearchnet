@@ -95,9 +95,9 @@ For example, consider a dataset of 10,005 (`comment`, `code`)  pairs. For every 
 
   We encourage the community to improve on these baselines by submitting PRs with your new benchmarks. Please see these [instructions for submitting to the leaderboard](src/docs/LEADERBOARD.md).  Some requirements for submission:  
 
-    - Results must be reproducible with clear instructions.
-    - Code must be open sourced and clearly licensed.
-    - Model must demonstrate an improvement on at least one of the auxiliary tests.
+- Results must be reproducible with clear instructions.
+- Code must be open sourced and clearly licensed.
+- Model must demonstrate an improvement on at least one of the auxiliary tests.
 
 # Running the Baseline Model
 
