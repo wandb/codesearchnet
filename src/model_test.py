@@ -120,6 +120,14 @@ class MrrSearchTester:
             ranks, distances = compute_ranks(batch_code_representations,
                                              batch_query_representations,
                                              self.__distance_metric)
+            # Add example tables of example rankings for each dataset
+            if wandb.run:
+                if data_label_name == "CoNaLa":
+                    table = []
+                    for e, r in zip(batch_data[:100], ranks[:100]):
+                        table.append([data_label_name, filter_language or "python", e['docstring'], "```python\n" + e['code'] + "```", r])
+                    wandb.log({"Examples": wandb.Table(columns=["Dataset", "Language", "Query", "Code", "Rank"], rows=table)})
+
             sum_mrr += np.mean(1.0 / ranks)
 
             if error_log is not None:
@@ -183,7 +191,6 @@ def log_row_count_diff(original_data: Iterable[Any], filtered_data:Iterable[Any]
 def get_conala_dataset(path: RichPath) -> List[Dict[str, Any]]:
     data_files = sorted(path.get_filtered_files_in_dir('*.json'), key=lambda p:p.path)
     raw_data = [row for row in flatten(list(f.read_as_json() for f in data_files)) if row['rewritten_intent']]
-
     data = chain([{'code': row['snippet'],
                    'code_tokens': tokenize_python_from_string(row['snippet'], func_only=False).code_tokens,
                    'docstring': row['rewritten_intent'],
