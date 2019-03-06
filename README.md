@@ -34,22 +34,21 @@ TODO: how to update this for the new readme structure?
 
 ## Project Overview
 
-  **CodeSearchNet** is a deep-learning based framework built on [TensorFlow](https://github.com/tensorflow/tensorflow) that we use to research the problem of code retrieval using natural language.  This research is a continuation of some ideas presented [here](https://githubengineering.com/towards-natural-language-semantic-code-search/) and is a joint collaboration between GitHub and the [Deep Program Understanding](https://www.microsoft.com/en-us/research/project/program/) group at [Microsoft Research - Cambridge](https://www.microsoft.com/en-us/research/lab/microsoft-research-cambridge/). Our intent is to present and inspire research on an interesting and useful machine learning problem and to provide our data and code so our results are reproducible.
+  **CodeSearchNet** is a collection of datasets and a deep-learning framework built on [TensorFlow](https://github.com/tensorflow/tensorflow) that we use to research the problem of code retrieval using natural language.  This research is a continuation of some ideas presented in this [blog post](https://githubengineering.com/towards-natural-language-semantic-code-search/) and is a joint collaboration between GitHub and the [Deep Program Understanding](https://www.microsoft.com/en-us/research/project/program/) group at [Microsoft Research - Cambridge](https://www.microsoft.com/en-us/research/lab/microsoft-research-cambridge/). Our intent is to present and provide a platform for this research to the community by providing the following:
 
-  The goals of this repository are to provide the community with the following:
-
-  1. Instructions for obtaining large corpora of relevant data
-  2. A modeling framework and training code to reproduce our results
-  3. Baseline evaluation metrics and utilities
-  4. Links to pre-trained models
+  1. Instructions for obtaining a large corpora of relevant data
+  2. Open source code for a range of baseline models, together with pre-trained weights.
+  3. Baseline evaluation metrics and utilities.
+  4. Mechanisms to report new results on a leaderboard. [Weights & Biases](https://www.wandb.com/) is hosting the leaderboard, free to community for open source projects. 
+  4. Links to pre-trained models.
 
 More context regarding the motivation for this problem is in our blog post [TODO here](#TODO-TODO).
 
 ## Data
 
-  The primary dataset consists of 3.2 million pairs of (`comments`, `code`). Since we do not have labeled examples for semantic code search, we use this proxy, parallel corpus of (`comments`, `code`) to force code and natural language into the same vector space.  We partition the data into train, validation, and test splits such that code from the same repository can only exist in one partition. Currently this is the only dataset on which we train our model. TODO: how many examples in each official partition of the dataset (train, val, test)?
+  The primary dataset consists of 3.2 million (`comment`, `code`) pairs from open source repositories.  Concretely, a `comment` is a top-level function or method comment (ex: in Python called docstrings), and `code` is either an entire function or method. Currently the dataset only contains Python, C#, and Java code, but we plan to expand to additional languages over time.  Throughout this repo, we refer to the terms docstring and query interchangeably.  Furthermore, we partition the data into train, validation, and test splits such that code from the same file can only exist in one partition. Currently this is the only dataset on which we train our model. Summary stastics about this dataset can be found in [this notebook](notebooks/ExploreData.ipynb)
 
-  We use three additional datasets for evaluation only (not for training).  TODO: how many examples are in each one?
+  We use three additional datasets for evaluation only (not for training).
 
   1. [CoNala](https://conala-corpus.github.io/): curated Stack Overflow data that is human-labeled with intent.  From this we construct a parallel corpus of (code, intent). 
 
@@ -59,16 +58,21 @@ More context regarding the motivation for this problem is in our blog post [TODO
 
 ## Network Architecture
 
-  This model ingests a parallel corpus of (`comments`, `code`) and learns to retrieve a code snippet given a natural language query.  Specifically, `comments` are top-level function and method comments (e.g. docstrings in Python), and `code` is an entire function or method. Throughout this repo, we refer to the terms docstring and query interchangeably.
+- This model ingests a parallel corpus of (`comment`, `code`) pairs and learns to retrieve a code snippet given a natural language query.
 
-  The query has a single encoder, whereas each programming language has its own encoder (our initial release has three languages: Python, Java, and C#).
-  Available encoders: Neural-Bag-Of-Words, RNN, 1D-CNN, Self-Attention (BERT), 1D-CNN+Self-Attention Hybrid
+- The query has a single encoder, whereas each programming language has its own encoder (our initial release has three languages: Python, Java, and C#).
+
+- Available encoders: Neural-Bag-Of-Words, RNN, 1D-CNN, Self-Attention (BERT), 1D-CNN+Self-Attention Hybrid
+
+The diagram below illustrates the general architecture of our model:
 
   ![alt text](images/architecture.png "Architecture")
 
 ## Evaluation
 
-  The metric we use for evaluation is [Mean Reciprocal Rank](https://en.wikipedia.org/wiki/Mean_reciprocal_rank)--this is the average of the reciprocal of the rank of the correct answer for each query (i.e. 1 for first place, 1/2 for second place, 1/3 for third, etc).  To calculate MRR, we use distractors from negative samples within a batch at evaluation time (with batch size 1,000). For example, consider a dataset of 10,000 (`comment`, `code`)  pairs. For every (`comment`, `code`) pair in the batch of 1,000, we use the comment as to retrieve the code, with all the other code snippets in the batch serving as distractors. We score this retrieval using a distance metric of our choice, e.g. cosine distance. TODO: provide more detail--use cosine distance/other metric how?  We then average the MRR across all batches to compute MRR for the dataset.  If the dataset is not evenly divisible by 1,000, we exclude the final batch (any remainder that is less than 1,000) from the MRR calculation.
+  The metric we use for evaluation is [Mean Reciprocal Rank](https://en.wikipedia.org/wiki/Mean_reciprocal_rank).  To calculate MRR, we use distractors from negative samples within a batch at evaluation time, with a fixed batch size of 1,000 (Note: we fix the batch size to 1,000 at evaluation time to standardize the MRR calculation, and do not do this at training time.)
+  
+For example, consider a dataset of 10,005 (`comment`, `code`)  pairs. For every (`comment`, `code`) pair in each of the 10 batches (we exclude the remaining 5 examples), we evaluate the our ability to retrieve code using the comment. We then average the MRR across all batches to compute MRR for the dataset.  If the dataset is not divisible by 1,000, we exclude the final batch (any remainder that is less than 1,000) from the MRR calculation.
 
   We also evaluate our model on external datasets that more closely resemble semantic search and test our ability to learn generalized representations of code.  Throughout the documentation, we refer to these as **Auxiliary tests**.
 
@@ -91,9 +95,9 @@ More context regarding the motivation for this problem is in our blog post [TODO
 
   We encourage the community to improve on these baselines by submitting PRs with your new benchmarks. Please see these [instructions for submitting to the leaderboard](src/docs/LEADERBOARD.md).  Some requirements for submission:  
 
-    - Results must be reproducible with clear instructions.
-    - Code must be open sourced and clearly licensed.
-    - Model must demonstrate an improvement on at least one of the auxiliary tests.
+- Results must be reproducible with clear instructions.
+- Code must be open sourced and clearly licensed.
+- Model must demonstrate an improvement on at least one of the auxiliary tests.
 
 # Running the Baseline Model
 
