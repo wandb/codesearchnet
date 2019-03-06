@@ -57,7 +57,7 @@ More context regarding the motivation for this problem is in our blog post [TODO
 
   Our model ingests a parallel corpus of (`comments`, `code`) and learns to retrieve a code snippet given a natural language query.  Specifically, `comments` are top-level function and method comments (e.g. docstrings in Python), and `code` is an entire function or method. Throughout this repo, we refer to the terms docstring and query interchangeably.
 
-  The query has a single encoder, whereas each programming language has its own encoder.  Our initial release has three languages: Python, Java, and C#. The available encoders are Neural-Bag-Of-Words, RNN, 1D-CNN, Self-Attention (BERT), and 1D-CNN+Self-Attention Hybrid.
+  The query has a single encoder, whereas each programming language has its own encoder.  Our initial release has three languages: Python, Java, and C#. The available encoders are Neural-Bag-Of-Words, RNN, 1D-CNN, Self-Attention (BERT), and a 1D-CNN+Self-Attention Hybrid.
 
   The diagram below illustrates the general architecture of our model:
   
