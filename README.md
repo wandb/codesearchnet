@@ -115,7 +115,7 @@ Since our model architecture is designed to learn a common representation for bo
       ```
       script/setup
       ```
-      This will build the required containers and download the primary and auxiliary datasets (may take a little while).  By default, the data is downloaded into the `resources/data/` folder inside this repository, with the directory structure described [here](resources/README.md).
+      This will build Docker containers and download the primary and auxiliary datasets.  By default, the data is downloaded into the `resources/data/` folder inside this repository, with the directory structure described [here](resources/README.md).
 
   **The datasets you will download (most of them compressed) have a combined size of only ~ 3.5 GB.** 
 
