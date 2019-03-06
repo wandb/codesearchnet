@@ -5,7 +5,7 @@
 [style]: https://www.python.org/dev/peps/pep-0008/
 [code-of-conduct]: CODE_OF_CONDUCT.md
 [azurepipelines]: azure-pipelines.yml
-[leaderboard]: LEADERBOARD.md
+[benchmark]: BENCHMARK.md
 
 Hi there! We're thrilled that you'd like to contribute to this project. Your help is essential for keeping it great.
 
@@ -15,12 +15,11 @@ Please note that this project is released with a [Contributor Code of Conduct][c
 
 ## Scope
 
-We anticipate the the community will design custom architectures and use frameworks other than Tensorflow.  Furthermore, we anticipate that other datasets beyond the ones provided in this project might be useful.  It is not our intention to integrate all of best models and datasets into this repository as a superset of all available ideas.  Rather, we intend to provide baseline approaches and provide a central place of reference with links to related repositories in the community.  Therefore, we are accepting pull requests for the following items:
+We anticipate that the community will design custom architectures and use frameworks other than Tensorflow.  Furthermore, we anticipate that other datasets beyond the ones provided in this project might be useful.  It is not our intention to integrate the best models and datasets into this repository as a superset of all available ideas.  Rather, we intend to provide baseline approaches and a central place of reference with links to related repositories from the community.  Therefore, we are accepting pull requests for the following items:
 
 - Bug fixes
-- Submissions to the leaderboard.  See [LEADERBOARD.md][leaderboard] for more information.
-- Updates to documentation, including links to your project(s) where improvements to the baseline have been made.
-- Minor improvements to the code.
+- Updates to documentation, including links to your project(s) where improvements to the baseline have been made
+- Minor improvements to the code
 
 Please open an issue if you are unsure regarding the best course of action.  
 
@@ -28,9 +27,9 @@ Please open an issue if you are unsure regarding the best course of action.
 
 0. [Fork][fork] and clone the repository
 0. Configure and install the dependencies: `script/bootstrap`
-0. Make sure the tests pass on your machine: See [azure-pipelines.yml][azurepipelines] to see tests we are currently running.
+0. Make sure the tests pass on your machine: see [azure-pipelines.yml][azurepipelines] to see tests we are currently running.
 0. Create a new branch: `git checkout -b my-branch-name`
-0. Make your change, add tests, and make sure the tests still pass
+0. Make your change, add tests, and make sure the tests still pass.
 0. Push to your fork and [submit a pull request][pr]
 0. Pat your self on the back and wait for your pull request to be reviewed and merged.
 
