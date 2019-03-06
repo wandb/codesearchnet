@@ -38,7 +38,7 @@
   1. Instructions for obtaining large corpora of relevant data
   2. Open source code for a range of baseline models, along with pre-trained weights
   3. Baseline evaluation metrics and utilities.
-  4. Mechanisms to track progress on the community benchmark TODO: link here to active benchmark?
+  4. Mechanisms to track progress on the community benchmark.  This is hosted by [Weights & Biases](https://www.wandb.com/), which is free for open source projects. TODO: link here to active benchmark?
 
 More context regarding the motivation for this problem is in our blog post [TODO here](#TODO-TODO).
 
