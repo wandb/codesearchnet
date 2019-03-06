@@ -57,7 +57,7 @@ More context regarding the motivation for this problem is in our blog post [TODO
 
 ## Network Architecture
 
-- This model ingests a parallel corpus of (`comment`, `code`) and learns to retrieve a code snippet given a natural language query.
+- This model ingests a parallel corpus of (`comment`, `code`) pairs and learns to retrieve a code snippet given a natural language query.
 
 - The query has a single encoder, whereas each programming language has its own encoder (our initial release has three languages: Python, Java, and C#).
 
