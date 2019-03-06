@@ -37,9 +37,10 @@ TODO: how to update this for the new readme structure?
   **CodeSearchNet** is a collection of datasets and a deep-learning framework built on [TensorFlow](https://github.com/tensorflow/tensorflow) that we use to research the problem of code retrieval using natural language.  This research is a continuation of some ideas presented in this [blog post](https://githubengineering.com/towards-natural-language-semantic-code-search/) and is a joint collaboration between GitHub and the [Deep Program Understanding](https://www.microsoft.com/en-us/research/project/program/) group at [Microsoft Research - Cambridge](https://www.microsoft.com/en-us/research/lab/microsoft-research-cambridge/). Our intent is to present and provide a platform for this research to the community by providing the following:
 
   1. Instructions for obtaining a large corpora of relevant data
-  2. A modeling framework and training code to reproduce our results
-  3. Baseline evaluation metrics and utilities
-  4. Links to pre-trained models
+  2. Open source code for a range of baseline models, together with pre-trained weights.
+  3. Baseline evaluation metrics and utilities.
+  4. Mechanisms to report new results on a leaderboard. [Weights & Biases](https://www.wandb.com/) is hosting the leaderboard, free to community for open source projects. 
+  4. Links to pre-trained models.
 
 More context regarding the motivation for this problem is in our blog post [TODO here](#TODO-TODO).
 
