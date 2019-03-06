@@ -40,6 +40,8 @@
   3. Baseline evaluation metrics and utilities.
   4. Mechanisms to track progress on the community benchmark.  This is hosted by [Weights & Biases](https://www.wandb.com/), which is free for open source projects. TODO: link here to active benchmark?
 
+We hope that CodeSearchNet is a good step towards engaging with the broader machine learning and NLP community towards developing new machine learning models that understand source code and natural language. Despite the fact that we described a specific task here, we expect and welcome many other uses of our dataset. 
+
 More context regarding the motivation for this problem is in our blog post [TODO here](#TODO-TODO).
 
 ## Data
