@@ -70,7 +70,9 @@ The diagram below illustrates the general architecture of our model:
 
 ## Evaluation
 
-  The metric we use for evaluation is [Mean Reciprocal Rank](https://en.wikipedia.org/wiki/Mean_reciprocal_rank)--this is the average of the reciprocal of the rank of the correct answer for each query (i.e. 1 for first place, 1/2 for second place, 1/3 for third, etc).  To calculate MRR, we use distractors from negative samples within a batch at evaluation time (with batch size 1,000). For example, consider a dataset of 10,000 (`comment`, `code`)  pairs. For every (`comment`, `code`) pair in the batch of 1,000, we use the comment as to retrieve the code, with all the other code snippets in the batch serving as distractors. We score this retrieval using a distance metric of our choice, e.g. cosine distance. TODO: provide more detail--use cosine distance/other metric how?  We then average the MRR across all batches to compute MRR for the dataset.  If the dataset is not evenly divisible by 1,000, we exclude the final batch (any remainder that is less than 1,000) from the MRR calculation.
+  The metric we use for evaluation is [Mean Reciprocal Rank](https://en.wikipedia.org/wiki/Mean_reciprocal_rank).  To calculate MRR, we use distractors from negative samples within a batch at evaluation time, with a fixed batch size of 1,000 (Note: we fix the batch size to 1,000 at evaluation time to standardize the MRR calculation, and do not do this at training time.)
+  
+For example, consider a dataset of 10,005 (`comment`, `code`)  pairs. For every (`comment`, `code`) pair in each of the 10 batches (we exclude the remaining 5 examples), we evaluate the our ability to retrieve code using the comment. We then average the MRR across all batches to compute MRR for the dataset.  If the dataset is not divisible by 1,000, we exclude the final batch (any remainder that is less than 1,000) from the MRR calculation.
 
   We also evaluate our model on external datasets that more closely resemble semantic search and test our ability to learn generalized representations of code.  Throughout the documentation, we refer to these as **Auxiliary tests**.
 
