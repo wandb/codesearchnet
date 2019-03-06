@@ -46,7 +46,7 @@ More context regarding the motivation for this problem is in our blog post [TODO
 
 ## Data
 
-  The primary dataset consists of 3.2 million (`comment`, `code`) pairs from open source repositories.  Specifically, a `comment` is a top-level function or method comment (ex: in Python called docstrings), and `code` is either an entire function or method. Currently the dataset only contains Python, C#, and Java code, but we plan to expand to additional languages over time.  Throughout this repo, we refer to the terms docstring and query interchangeably.  Furthermore, we partition the data into train, validation, and test splits such that code from the same file can only exist in one partition. Currently this is the only dataset on which we train our model. Summary stastics about this dataset can be found in [this notebook](notebooks/ExploreData.ipynb)
+  The primary dataset consists of 3.2 million (`comment`, `code`) pairs from open source repositories.  Concretely, a `comment` is a top-level function or method comment (ex: in Python called docstrings), and `code` is either an entire function or method. Currently the dataset only contains Python, C#, and Java code, but we plan to expand to additional languages over time.  Throughout this repo, we refer to the terms docstring and query interchangeably.  Furthermore, we partition the data into train, validation, and test splits such that code from the same file can only exist in one partition. Currently this is the only dataset on which we train our model. Summary stastics about this dataset can be found in [this notebook](notebooks/ExploreData.ipynb)
 
   We use three additional datasets for evaluation only (not for training).
 
