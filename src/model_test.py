@@ -92,18 +92,17 @@ class MrrSearchTester:
                 return np.random.randn(self.__model.representation_size)
 
         # Determine random sample of examples before chunking into batches.
-        sample = np.zeros(len(data), dtype=bool)
-        # Sample size is limited to full batches
-        sample_size = len(data) // self.__test_batch_size * self.__test_batch_size
-        sample[np.random.choice(np.arange(sample_size), replace=False, size=min(sample_size, 50))] = True
-        sample_table = []
-        table_name = data_label_name
-        table_columns = ["Rank", "Query", "Code"]
+        # sample only from full batches
+        max_samples = 50
+        full_batch_len = len(data) // self.__test_batch_size * self.__test_batch_size
+        examples_sample = np.zeros(len(data), dtype=bool)
+        examples_sample[np.random.choice(np.arange(full_batch_len), replace=False, size=min(full_batch_len, max_samples))] = True
+        examples_table = []
 
         sum_mrr = 0.0
         num_batches = 0
         batched_data = chunked(data, self.__test_batch_size)
-        batched_sample = chunked(sample, self.__test_batch_size)
+        batched_sample = chunked(examples_sample, self.__test_batch_size)
         for batch_idx, (batch_data, batch_sample) in enumerate(zip(batched_data, batched_sample)):
             if len(batch_data) < self.__test_batch_size:
                 break  # the last batch is smaller than the others, exclude.
@@ -131,24 +130,27 @@ class MrrSearchTester:
             ranks, distances = compute_ranks(batch_code_representations,
                                              batch_query_representations,
                                              self.__distance_metric)
-            # Add example tables of example rankings for each dataset
+
+            # Log example tables for a sample of rankings of queries for each dataset
             if wandb.run:
                 if data_label_name == "FuncNameTest-All":
-                    #pp.pprint(batch_data)
-                    table_name = "FuncName"
-                    table_columns = ["Rank", "Language", "Query", "Code"]
-                    for e, r, s in zip(batch_data, ranks, batch_sample):
-                        if not s:
+                    examples_table_name = "FuncName"
+                    examples_table_columns = ["Rank", "Language", "Query", "Code"]
+                    for example, sample, rank in zip(batch_data, batch_sample, ranks):
+                        if not sample:
                             continue
-                        lang = e['language']
-                        code = "```%s\n" % lang + e['code'].strip("\n") + "\n```"
-                        sample_table.append([r, lang, e['func_name'], code])
+                        language = example['language']
+                        markdown_code = "```%s\n" % language + example['code'].strip("\n") + "\n```"
+                        examples_table.append((rank, language, example['func_name'], markdown_code))
                 elif data_label_name in ("CoNaLa", "StaQC"):
-                    for e, r, s in zip(batch_data, ranks, batch_sample):
-                        if not s:
+                    examples_table_name = data_label_name
+                    examples_table_columns = ["Rank", "Query", "Code"]
+                    for example, sample, rank in zip(batch_data, batch_sample, ranks):
+                        if not sample:
                             continue
-                        code = "```python\n" + e['code'].strip("\n") + "\n```"
-                        sample_table.append([r, e['docstring'], code])
+                        language = "python"
+                        markdown_code = "```%s\n" % language + example['code'].strip("\n") + "\n```"
+                        examples_table.append((rank, example['docstring'], markdown_code))
 
             sum_mrr += np.mean(1.0 / ranks)
 
@@ -166,8 +168,8 @@ class MrrSearchTester:
             if self.__quiet and batch_idx % 100 == 99:
                 print(f'Tested on {batch_idx + 1} batches so far.')
 
-        if wandb.run and sample_table:
-            wandb.log({"Examples-%s" % table_name: wandb.Table(columns=table_columns, rows=sample_table)})
+        if wandb.run and examples_table:
+            wandb.log({"Examples-%s" % examples_table_name: wandb.Table(columns=examples_table_columns, rows=examples_table)})
 
         eval_mrr = sum_mrr / num_batches
         log_label = f'{data_label_name} MRR (bs={self.__test_batch_size:,})'
