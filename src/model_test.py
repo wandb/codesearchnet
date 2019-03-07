@@ -218,6 +218,7 @@ def log_row_count_diff(original_data: Iterable[Any], filtered_data:Iterable[Any]
 def get_conala_dataset(path: RichPath) -> List[Dict[str, Any]]:
     data_files = sorted(path.get_filtered_files_in_dir('*.json'), key=lambda p:p.path)
     raw_data = [row for row in flatten(list(f.read_as_json() for f in data_files)) if row['rewritten_intent']]
+
     data = chain([{'code': row['snippet'],
                    'code_tokens': tokenize_python_from_string(row['snippet'], func_only=False).code_tokens,
                    'docstring': row['rewritten_intent'],
