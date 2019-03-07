@@ -141,7 +141,7 @@ class MrrSearchTester:
                             continue
                         language = example['language']
                         markdown_code = "```%s\n" % language + example['code'].strip("\n") + "\n```"
-                        examples_table.append((rank, language, example['func_name'], markdown_code))
+                        examples_table.append([rank, language, example['func_name'], markdown_code])
                 elif data_label_name in ("CoNaLa", "StaQC"):
                     examples_table_name = data_label_name
                     examples_table_columns = ["Rank", "Query", "Code"]
@@ -150,7 +150,7 @@ class MrrSearchTester:
                             continue
                         language = "python"
                         markdown_code = "```%s\n" % language + example['code'].strip("\n") + "\n```"
-                        examples_table.append((rank, example['docstring'], markdown_code))
+                        examples_table.append([rank, example['docstring'], markdown_code])
 
             sum_mrr += np.mean(1.0 / ranks)
 
