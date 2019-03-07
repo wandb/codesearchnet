@@ -1,2 +1,3 @@
 [default]
-project: CodeSearchNet
+project = CodeSearchNet
+
