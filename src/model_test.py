@@ -446,8 +446,8 @@ def compute_evaluation_metrics(model_path: RichPath, arguments,
             auxilary_mrrs.append(final_eval[key])
     
     mean_auxilary_mrr = np.mean(auxilary_mrrs)
-    final_eval['Mean Auxilary MRR'] = mean_auxilary_mrr
-    print(f'Mean Auxilary MRR: {mean_auxilary_mrr: .3f}')
+    final_eval['Mean Auxiliary MRR'] = mean_auxilary_mrr
+    print(f'Mean Auxiliary MRR: {mean_auxilary_mrr: .3f}')
 
 
     if wandb.run and final_eval:
