@@ -91,9 +91,19 @@ class MrrSearchTester:
             else:
                 return np.random.randn(self.__model.representation_size)
 
+        # Determine random sample of examples before chunking into batches.
+        # sample only from full batches
+        max_samples = 50
+        full_batch_len = len(data) // self.__test_batch_size * self.__test_batch_size
+        examples_sample = np.zeros(len(data), dtype=bool)
+        examples_sample[np.random.choice(np.arange(full_batch_len), replace=False, size=min(full_batch_len, max_samples))] = True
+        examples_table = []
+
         sum_mrr = 0.0
         num_batches = 0
-        for batch_idx, batch_data in enumerate(chunked(data, self.__test_batch_size)):
+        batched_data = chunked(data, self.__test_batch_size)
+        batched_sample = chunked(examples_sample, self.__test_batch_size)
+        for batch_idx, (batch_data, batch_sample) in enumerate(zip(batched_data, batched_sample)):
             if len(batch_data) < self.__test_batch_size:
                 break  # the last batch is smaller than the others, exclude.
             num_batches += 1
@@ -120,6 +130,28 @@ class MrrSearchTester:
             ranks, distances = compute_ranks(batch_code_representations,
                                              batch_query_representations,
                                              self.__distance_metric)
+
+            # Log example tables for a sample of rankings of queries for each dataset
+            if wandb.run:
+                if data_label_name == "FuncNameTest-All":
+                    examples_table_name = "FuncName"
+                    examples_table_columns = ["Rank", "Language", "Query", "Code"]
+                    for example, sample, rank in zip(batch_data, batch_sample, ranks):
+                        if not sample:
+                            continue
+                        language = example['language']
+                        markdown_code = "```%s\n" % language + example['code'].strip("\n") + "\n```"
+                        examples_table.append([rank, language, example['func_name'], markdown_code])
+                elif data_label_name in ("CoNaLa", "StaQC"):
+                    examples_table_name = data_label_name
+                    examples_table_columns = ["Rank", "Query", "Code"]
+                    for example, sample, rank in zip(batch_data, batch_sample, ranks):
+                        if not sample:
+                            continue
+                        language = "python"
+                        markdown_code = "```%s\n" % language + example['code'].strip("\n") + "\n```"
+                        examples_table.append([rank, example['docstring'], markdown_code])
+
             sum_mrr += np.mean(1.0 / ranks)
 
             if error_log is not None:
@@ -135,6 +167,9 @@ class MrrSearchTester:
 
             if self.__quiet and batch_idx % 100 == 99:
                 print(f'Tested on {batch_idx + 1} batches so far.')
+
+        if wandb.run and examples_table:
+            wandb.log({"Examples-%s" % examples_table_name: wandb.Table(columns=examples_table_columns, rows=examples_table)})
 
         eval_mrr = sum_mrr / num_batches
         log_label = f'{data_label_name} MRR (bs={self.__test_batch_size:,})'
@@ -411,8 +446,8 @@ def compute_evaluation_metrics(model_path: RichPath, arguments,
             auxilary_mrrs.append(final_eval[key])
     
     mean_auxilary_mrr = np.mean(auxilary_mrrs)
-    final_eval['Mean Auxilary MRR'] = mean_auxilary_mrr
-    print(f'Mean Auxilary MRR: {mean_auxilary_mrr: .3f}')
+    final_eval['Mean Auxiliary MRR'] = mean_auxilary_mrr
+    print(f'Mean Auxiliary MRR: {mean_auxilary_mrr: .3f}')
 
 
     if wandb.run and final_eval:
