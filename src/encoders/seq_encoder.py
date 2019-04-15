@@ -1,12 +1,10 @@
 from collections import Counter
-from itertools import takewhile
-from operator import not_
 import numpy as np
-import scipy.stats
 from typing import Dict, Any, List, Iterable, Optional, Tuple
 import random
 import re
 
+from utils.bpevocabulary import BpeVocabulary
 from utils.tfutils import convert_and_pad_token_sequence
 
 import tensorflow as tf
@@ -27,6 +25,9 @@ class SeqEncoder(Encoder):
                            'mark_subtoken_end': False,
 
                            'max_num_tokens': 200,
+
+                           'use_bpe': False,
+                           'pct_bpe': 0.5
                          }
         hypers = super().get_default_hyperparameters()
         hypers.update(encoder_hypers)
@@ -36,6 +37,10 @@ class SeqEncoder(Encoder):
 
     def __init__(self, label: str, hyperparameters: Dict[str, Any], metadata: Dict[str, Any]):
         super().__init__(label, hyperparameters, metadata)
+        if hyperparameters['%s_use_bpe' % label]:
+            assert not hyperparameters['%s_use_subtokens' % label], 'Subtokens cannot be used along with BPE.'
+        elif hyperparameters['%s_use_subtokens' % label]:
+            assert not hyperparameters['%s_use_bpe' % label], 'Subtokens cannot be used along with BPE.'
 
     def _make_placeholders(self):
         """
@@ -100,9 +105,15 @@ class SeqEncoder(Encoder):
         for raw_metadata in raw_metadata_list:
             merged_token_counter += raw_metadata['token_counter']
 
-        token_vocabulary = Vocabulary.create_vocabulary(tokens=merged_token_counter,
-                                                        max_size=hyperparameters['%s_token_vocab_size' % encoder_label],
-                                                        count_threshold=hyperparameters['%s_token_vocab_count_threshold' % encoder_label])
+        if hyperparameters['%s_use_bpe' % encoder_label]:
+            token_vocabulary = BpeVocabulary(vocab_size=hyperparameters['%s_token_vocab_size' % encoder_label],
+                                             pct_bpe=hyperparameters['%s_pct_bpe' % encoder_label]
+                                             )
+            token_vocabulary.fit(merged_token_counter)
+        else:
+            token_vocabulary = Vocabulary.create_vocabulary(tokens=merged_token_counter,
+                                                            max_size=hyperparameters['%s_token_vocab_size' % encoder_label],
+                                                            count_threshold=hyperparameters['%s_token_vocab_count_threshold' % encoder_label])
 
         final_metadata['token_vocab'] = token_vocabulary
         # Save the most common tokens for use in data augmentation:

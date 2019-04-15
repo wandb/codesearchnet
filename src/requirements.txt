@@ -8,3 +8,4 @@ wandb
 pygments
 parso
 pandas
+toolz

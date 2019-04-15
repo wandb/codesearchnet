@@ -1,10 +1,9 @@
-from typing import Dict, Any, Union, Tuple, Optional, Iterable
+from typing import Dict, Any, Union, Tuple
 
-import numpy as np
 import tensorflow as tf
 
 from .seq_encoder import SeqEncoder
-from utils.tfutils import convert_and_pad_token_sequence, write_to_feed_dict, pool_sequence_embedding
+from utils.tfutils import write_to_feed_dict, pool_sequence_embedding
 
 
 def __make_rnn_cell(cell_type: str,
