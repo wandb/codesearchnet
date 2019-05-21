@@ -400,55 +400,5 @@ def compute_evaluation_metrics(model_path: RichPath, arguments,
         tester.evaluate(get_dataset_from(valid_data_dirs, max_files_per_dir=max_files_per_dir), f'Validation-{language_name}',
                         filter_language=language_name if filter_language else None)
 
-    if 'python' in tester.model.per_code_language_metadata:
-        # run evaluation on Conala dataset
-        # https://conala-corpus.github.io/
-        conala_path = RichPath.create(arguments['--conala-data-path'], azure_info_path)
-        mrr = tester.evaluate(get_conala_dataset(conala_path), 'CoNaLa')
-        final_eval['CoNaLa MRR'] = mrr
-
-        # run evaluation on StaQC dataset
-        # https://github.com/LittleYUYU/StackOverflow-Question-Code-Dataset
-        staqc_path = RichPath.create(arguments['--staqc-data-path'], azure_info_path)
-        mrr = tester.evaluate(get_staqc_dataset(staqc_path), 'StaQC')
-        final_eval['StaQC MRR'] = mrr
-
-    rosetta_scores = []
-    for source_language, target_language in [('python', 'csharp'),
-                                             ('csharp', 'python'),
-                                             ('python', 'java'),
-                                             ('java', 'python'),
-                                             ('csharp', 'java'),
-                                             ('java', 'csharp')]:
-        if (source_language in tester.model.per_code_language_metadata and
-            target_language in tester.model.per_code_language_metadata):
-            # run evaluation on Rosetta Code dataset
-            rosetta_code_path = RichPath.create(arguments['--rosetta-code-data-path'], azure_info_path)
-            source_tokens, target_tokens = get_rosetta_code_tokens(rosetta_code_path,
-                                                                   source_language,
-                                                                   target_language)
-            mrr = evaluate_rosetta_code(tester.model, source_language, source_tokens,
-                                        target_language, target_tokens,
-                                        'RosettaCode-{}-{}'.format(source_language, target_language),
-                                        test_batch_size=int(arguments['--test-batch-size']),
-                                        testset_mixin=test_data)
-            
-            rosetta_scores.append(mrr)
-
-    final_eval['Rosetta MRR'] = np.mean(rosetta_scores)
-
-    # Print summary metrics used for leaderboard.
-    auxilary_mrrs = []
-    print('====== Summary Evaluation Metrics ====== ')
-    for key in final_eval:
-        print(f'{key}: {final_eval[key]: .3f}')
-        if key != 'Primary MRR':
-            auxilary_mrrs.append(final_eval[key])
-    
-    mean_auxilary_mrr = np.mean(auxilary_mrrs)
-    final_eval['Mean Auxiliary MRR'] = mean_auxilary_mrr
-    print(f'Mean Auxiliary MRR: {mean_auxilary_mrr: .3f}')
-
-
     if wandb.run and final_eval:
         wandb.run.summary['Eval'] = final_eval

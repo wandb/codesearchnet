@@ -32,9 +32,6 @@ Options:
     --evaluate-model PATH            Run evaluation on previously trained model.
     --sequential                     Do not parallelise data-loading. Simplifies debugging. [default: False]
     --debug                          Enable debug routines. [default: False]
-    --conala-data-path PATH          Path to Conala data set which is a directory filled with .json files.
-    --staqc-data-path PATH           Path to StaQC data set which is a directory filled with .pickle files.
-    --rosetta-code-data-path PATH    Path to Rosetta Code Python-Csharp data set which is a directory.
 """
 import json
 import os
@@ -111,18 +108,6 @@ def run(arguments, tag_in_vcs=False) -> None:
 
     dir_path = Path(__file__).parent.absolute()
 
-    # user specifies test run, only use small number of files.
-    if testrun:
-        print('Executing test model run for debugging.')
-        max_files_per_dir = 2
-        # if test run flag is passed evaluate auxilary tests against syntethic data by default.
-        if not arguments['--rosetta-code-data-path']:
-            arguments['--rosetta-code-data-path'] = str(dir_path.parent/'tests/data/rosetta/')
-        if not arguments['--staqc-data-path']:
-            arguments['--staqc-data-path'] = str(dir_path.parent/'tests/data/staqc/')
-        if not arguments['--conala-data-path']:
-            arguments['--conala-data-path'] = str(dir_path.parent/'tests/data/conala/')
-
     # if you do not pass arguments for train/valid/test data default to files checked into repo.
     if not arguments['TRAIN_DATA_PATH']:
         arguments['TRAIN_DATA_PATH'] = str(dir_path/'data_dirs_train.txt')
@@ -132,16 +117,6 @@ def run(arguments, tag_in_vcs=False) -> None:
     train_data_dirs = test.expand_data_path(arguments['TRAIN_DATA_PATH'], azure_info_path)
     valid_data_dirs = test.expand_data_path(arguments['VALID_DATA_PATH'], azure_info_path)
     test_data_dirs = test.expand_data_path(arguments['TEST_DATA_PATH'], azure_info_path)
-
-    # supply defaults for the auxilary tests
-    if not arguments['--conala-data-path']:
-        arguments['--conala-data-path'] = str(dir_path.parent/'resources/data/aux/conala/')
-
-    if not arguments['--staqc-data-path']:
-        arguments['--staqc-data-path'] = str(dir_path.parent/'resources/data/aux/staqc/')
-    
-    if not arguments['--rosetta-code-data-path']:
-        arguments['--rosetta-code-data-path'] = str(dir_path.parent/'resources/data/aux/rosetta/')
     
     # default model save location
     if not arguments['SAVE_FOLDER']:
