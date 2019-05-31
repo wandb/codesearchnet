@@ -13,7 +13,7 @@ class ConvSelfAttentionModel(Model):
                            for key, value in ConvSelfAttentionEncoder.get_default_hyperparameters().items()})
         model_hypers = {
             'learning_rate': 5e-4,
-            'code_use_subtokens': True,
+            'code_use_subtokens': False,
             'code_mark_subtoken_end': False,
             'batch_size': 650,
         }

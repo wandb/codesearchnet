@@ -26,7 +26,7 @@ class SeqEncoder(Encoder):
 
                            'max_num_tokens': 200,
 
-                           'use_bpe': False,
+                           'use_bpe': True,
                            'pct_bpe': 0.5
                          }
         hypers = super().get_default_hyperparameters()
