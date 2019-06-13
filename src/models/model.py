@@ -154,7 +154,7 @@ class Model(ABC):
         self.__sess = tf.Session(graph=graph, config=config)
 
         # save directory as tensorboard.
-        self.__tensorboard_dir = wandb.run.dir if wandb.run.dir else log_save_dir
+        self.__tensorboard_dir = log_save_dir
 
     @property
     def query_metadata(self):

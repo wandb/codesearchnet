@@ -23,5 +23,6 @@ if __name__ == '__main__':
 
     for language in ('python', 'javascript', 'java', 'ruby', 'php', 'go'):
         call(['wget', 'https://s3.amazonaws.com/code-search-net/CodeSearchNet/v2/{}.zip'.format(language), '-P', destination_dir, '-O', '{}.zip'.format(language)])
+        call(['wget', 'https://s3.amazonaws.com/code-search-net/CodeSearchNet/v2/{}_dedupe_definitions_v2.pkl'.format(language), '-P', destination_dir, '-O', '{}_dedupe_definitions_v2.pkl'.format(language)])
         call(['unzip', '{}.zip'.format(language)])
         call(['rm', '{}.zip'.format(language)])
