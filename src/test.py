@@ -16,9 +16,6 @@ Options:
     --azure-info PATH                Azure authentication information file (JSON). Used to load data from Azure storage.
     --sequential                     Do not parallelise data-loading. Simplifies debugging. [default: False]
     --debug                          Enable debug routines. [default: False]
-    --conala-data-path PATH          Path to Conala data set which is a directory filled with .json files. [default: azure://semanticcodesearch/conala-corpus/]
-    --staqc-data-path PATH           Path to StaQC data set which is a directory filled with .pickle files. [default: azure://semanticcodesearch/staqc-python-single-code-answer/]
-    --rosetta-code-data-path PATH    Path to Rosetta Code Python-Csharp data set which is a directory. [default: azure://semanticcodesearch/rosetta-code/]
 """
 from pathlib import Path
 

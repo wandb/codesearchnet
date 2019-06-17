@@ -9,6 +9,7 @@
   - [Data](#data)
   - [Network Architecture](#network-architecture)
   - [Evaluation](#evaluation)
+    - [Annotations](#annotations)
   - [Benchmark](#benchmark)
   - [How to Contribute](#how-to-contribute)
 - [Running the Baseline Model](#running-the-baseline-model)
@@ -20,8 +21,7 @@
   - [Preprocessed Data Format](#preprocessed-data-format)
   - [(Optional) Downloading Datasets from S3](#optional-downloading-datasets-from-s3)
     - [Preprocessed data](#preprocessed-data)
-    - [Raw Data - Filtered](#raw-data---filtered)
-    - [Raw Data - Unfiltered](#raw-data---unfiltered)
+    - [All functions (w/o comments)](#all-functions--w-o-comments)
 - [References](#references)
   - [Other READMEs](#other-readmes)
   - [License](#license)
@@ -46,13 +46,7 @@ More context regarding the motivation for this problem is in our blog post [TODO
 
 ## Data
 
-  The primary dataset consists of 3.2 million (`comment`, `code`) pairs from open source repositories.  Concretely, a `comment` is a top-level function or method comment (e.g. docstrings in Python), and `code` is an entire function or method. Currently the dataset only contains Python, C#, and Java code, but we plan to add languages over time.  Throughout this repo, we refer to the terms docstring and query interchangeably.  We partition the data into train, validation, and test splits such that code from the same file can only exist in one partition. Currently this is the only dataset on which we train our model. Summary stastics about this dataset can be found in [this notebook](notebooks/ExploreData.ipynb)
-
-  We use three additional datasets for evaluation only (not for training):
-
-  1. [CoNala](https://conala-corpus.github.io/): curated Stack Overflow data that is human-labeled with intent.  From this we construct a parallel corpus of (code, intent). 
-  2. [StaQC](http://web.cse.ohio-state.edu/~sun.397/docs/StaQC-www18.pdf): another dataset manually curated from Stack Overflow with (code, question) pairs
-  3. [Rosetta Code](http://www.rosettacode.org/wiki/Rosetta_Code): We use data from this site to construct several parallel corpora containing pairs of code snippets that accomplish the same task in Python, C#, or Java.
+  The primary dataset consists of 2 million (`comment`, `code`) pairs from open source libraries.  Concretely, a `comment` is a top-level function or method comment (e.g. [docstrings](https://en.wikipedia.org/wiki/Docstring) in Python), and `code` is an entire function or method. Currently, the dataset contains Python, Javascript, Ruby, Go, Java, and PHP code.  Throughout this repo, we refer to the terms docstring and query interchangeably.  We partition the data into train, validation, and test splits such that code from the same repository can only exist in one partition. Currently this is the only dataset on which we train our model. Summary stastics about this dataset can be found in [this notebook](notebooks/ExploreData.ipynb)
 
 ## Network Architecture
 
@@ -72,24 +66,12 @@ More context regarding the motivation for this problem is in our blog post [TODO
  
 Since our model architecture is designed to learn a common representation for both code and natural language, we use the distances between these representations to rank results for the MRR calculation. We are computing distance using cosine similarity by default.
 
-  We also evaluate our model on external datasets that more closely resemble semantic search and test our ability to learn generalized representations of code.  Throughout the documentation, we refer to these as **Auxiliary tests**.
-
-  1. **Function Name Prediction**: Using our primary dataset, we train to retrieve the body of a function or method given a function or method name.
-
-  2. [CoNala](https://conala-corpus.github.io/): given a parallel corpus of (`code`, `intent`) pairs from Stack Overflow, retrieve code relevant to the query
-
-  3. [StaQC](http://web.cse.ohio-state.edu/~sun.397/docs/StaQC-www18.pdf): given a parallel corpus of (`code`, `question`) pairs from Stack Overflow, retrieve code relevant to the query
-
-  4. [Rosetta Code](http://www.rosettacode.org/wiki/Rosetta_Code): We use this parallel corpus to match code snippets across programming languages: given a snippet of Python code, retrieve code in Java or C# that accomplishes the same task.
+### Annotations
+  We annotate retrieval results for the six languages from 99 general [queries](resources/queries.csv). This dataset will be used as groundtruth data for evaluation _only_. One task is to predict top 100 results per language per query from [all functions (w/o comments)](#all-functions--w-o-comments). [NDCG](https://en.wikipedia.org/wiki/Discounted_cumulative_gain) is computed as our main metrics.
 
 ## Benchmark
 
   We are using a community benchmark for this project to encourage collaboration and improve reproducibility.  It is hosted by [Weights & Biases](https://www.wandb.com/) (W&B), which is free for open source projects.  Our entries in the benchmark link to detailed logs of our training and evaluation metrics, as well as model artifacts, and we encourage other participants to provide as much transparency as possible. Here is the current state of the benchmark:
-
-  **Authors**|**GitHub Repo**|**Notes**|**Primary Dataset MRR**|**FuncName MRR**|**CoNaLa MRR**|**StaQC MRR**|**Rosetta MRR**
-  :-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:
-  GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|Neural Bag of Words (cosine loss) |0.662|**0.419**|**0.259**|**0.168**|**0.123**
-  GitHub+Microsoft|[link](https://github.com/ml-msr-github/semantic-code-search)|1DCNN+SelfAttention|**0.757**|0.416|0.135|0.106|0.054
 
   We invite the community to improve on these baselines by submitting PRs with your new performance metrics.  TODO: how does the PR/submission flow interact between W&B leaderboard and this version? Please see these [instructions for submitting to the benchmark](src/docs/BENCHMARK.md).  Some requirements for submission:  
 
@@ -115,7 +97,7 @@ Since our model architecture is designed to learn a common representation for bo
       ```
       script/setup
       ```
-      This will build Docker containers and download the primary and auxiliary datasets.  By default, the data is downloaded into the `resources/data/` folder inside this repository, with the directory structure described [here](resources/README.md).
+      This will build Docker containers and download the datasets.  By default, the data is downloaded into the `resources/data/` folder inside this repository, with the directory structure described [here](resources/README.md).
 
   **The datasets you will download (most of them compressed) have a combined size of only ~ 3.5 GB.** 
 
@@ -154,15 +136,18 @@ This step assumes that you have a suitable Nvidia-GPU with [Cuda v9.0](https://d
     ```
     $ cat data_dirs_train.txt
     ../resources/data/python/final/jsonl/train
-    ../resources/data/csharp/final/jsonl/train
+    ../resources/data/javascript/final/jsonl/train
     ../resources/data/java/final/jsonl/train
+    ../resources/data/php/final/jsonl/train
+    ../resources/data/ruby/final/jsonl/train
+    ../resources/data/go/final/jsonl/train
     ```
 
     By default models are saved in the `resources/saved_models` folder of this repository.
 
-  * Training a 1D-CNN model on C# data only:
+  * Training a 1D-CNN model on Python data only:
     ```
-    python train.py --model 1dcnn /trained_models ../resources/data/csharp/final/jsonl/train ../resources/data/csharp/final/jsonl/valid ../resources/data/csharp/final/jsonl/test
+    python train.py --model 1dcnn /trained_models ../resources/data/python/final/jsonl/train ../resources/data/python/final/jsonl/valid ../resources/data/python/final/jsonl/test
     ```
 
     The above command overrides the default locations for saving the model to `trained_models` and also overrides the source of the train, validation, and test sets.
@@ -207,7 +192,6 @@ Data is stored in [jsonlines](http://jsonlines.org/) format.  Each line in the u
 
 - **repo:** the owner/repo
 - **path:** the full path to the original file
-- **lineno:** the lineno in the original file the function or method came from
 - **func_name:** the function or method name
 - **original_string:** the raw string before tokenization or parsing
 - **language:** the programming language
@@ -216,55 +200,96 @@ Data is stored in [jsonlines](http://jsonlines.org/) format.  Each line in the u
 - **docstring:** the top level comment or docstring, if exists in the original string
 - **docstring_tokens:** tokenized version of `docstring`
 - **sha:** this field is not being used [TODO: add note on where this comes from?]
-- **comment_tokens:** tokenized comments if they exist--not currently used in the model
-- **doc_id:** a unique id for tracking data lineage--not currently used
-- **hash_key:** the value used to hash this datum (only the part before the : is used)
-- **hash_value:** the numeric hash value, used to split the data into train/valid/test sets
 - **partition:** a flag indicating what partition this datum belongs to of {train, valid, test, etc.} This is not used by the model.  Instead we rely on directory structure to denote the partition of the data.
+- **url:** the url for the this code snippet including the line numbers
 
-Code, comments, and docstrings are extracted in a language-specific manner, removing artifacts of that language (e.g., XML comments in C#).
+Code, comments, and docstrings are extracted in a language-specific manner, removing artifacts of that language.
 
 ```{json}
 {
-  "repo": "github/myrepo",
-  "path": "myrepo/some_code.py",
-  "lineno": 167,
-  "func_name": "country_list",
-  "original_string": "def country_list(cts):\n    \"\"\"countries for comparisons\"\"\"\n    ct_nlp = []\n    for i in cts.keys():\n        nlped = nlp(i)\n        ct_nlp.append(nlped)\n    return ct_nlp\n",
-  "language": "python",
-  "code": "def country_list(cts):\n    \"\"\"\"\"\"\n    ct_nlp = []\n    for i in cts.keys():\n        nlped = nlp(i)\n        ct_nlp.append(nlped)\n    return ct_nlp\n",
-  "code_tokens": [
-    "def",
-    "country_list",
-    "cts",
-    "\"\"\"\"\"\"",
-    "ct_nlp",
-    "for",
-    "i",
-    "in",
-    "cts",
-    "keys",
-    "nlped",
-    "nlp",
-    "i",
-    "ct_nlp",
-    "append",
-    "nlped",
-    "return",
-    "ct_nlp"
-  ],
-  "docstring": "countries for comparisons",
-  "docstring_tokens": [
-    "countries",
-    "for",
-    "comparisons"
-  ],
-  "sha": "",
-  "comment_tokens": [],
-  "doc_id": 162323,
-  "hash_key": "github/myrepo:myrepo/some_code.py",
-  "hash_val": 51889,
-  "partition": "test"
+  'code': 'def get_vid_from_url(url):\n'
+          '        """Extracts video ID from URL.\n'
+          '        """\n'
+          "        return match1(url, r'youtu\\.be/([^?/]+)') or \\\n"
+          "          match1(url, r'youtube\\.com/embed/([^/?]+)') or \\\n"
+          "          match1(url, r'youtube\\.com/v/([^/?]+)') or \\\n"
+          "          match1(url, r'youtube\\.com/watch/([^/?]+)') or \\\n"
+          "          parse_query_param(url, 'v') or \\\n"
+          "          parse_query_param(parse_query_param(url, 'u'), 'v')",
+  'code_tokens': ['def',
+                  'get_vid_from_url',
+                  '(',
+                  'url',
+                  ')',
+                  ':',
+                  'return',
+                  'match1',
+                  '(',
+                  'url',
+                  ',',
+                  "r'youtu\\.be/([^?/]+)'",
+                  ')',
+                  'or',
+                  'match1',
+                  '(',
+                  'url',
+                  ',',
+                  "r'youtube\\.com/embed/([^/?]+)'",
+                  ')',
+                  'or',
+                  'match1',
+                  '(',
+                  'url',
+                  ',',
+                  "r'youtube\\.com/v/([^/?]+)'",
+                  ')',
+                  'or',
+                  'match1',
+                  '(',
+                  'url',
+                  ',',
+                  "r'youtube\\.com/watch/([^/?]+)'",
+                  ')',
+                  'or',
+                  'parse_query_param',
+                  '(',
+                  'url',
+                  ',',
+                  "'v'",
+                  ')',
+                  'or',
+                  'parse_query_param',
+                  '(',
+                  'parse_query_param',
+                  '(',
+                  'url',
+                  ',',
+                  "'u'",
+                  ')',
+                  ',',
+                  "'v'",
+                  ')'],
+  'docstring': 'Extracts video ID from URL.',
+  'docstring_tokens': ['Extracts', 'video', 'ID', 'from', 'URL', '.'],
+  'func_name': 'YouTube.get_vid_from_url',
+  'language': 'python',
+  'original_string': 'def get_vid_from_url(url):\n'
+                      '        """Extracts video ID from URL.\n'
+                      '        """\n'
+                      "        return match1(url, r'youtu\\.be/([^?/]+)') or \\\n"
+                      "          match1(url, r'youtube\\.com/embed/([^/?]+)') or "
+                      '\\\n'
+                      "          match1(url, r'youtube\\.com/v/([^/?]+)') or \\\n"
+                      "          match1(url, r'youtube\\.com/watch/([^/?]+)') or "
+                      '\\\n'
+                      "          parse_query_param(url, 'v') or \\\n"
+                      "          parse_query_param(parse_query_param(url, 'u'), "
+                      "'v')",
+  'partition': 'test',
+  'path': 'src/you_get/extractors/youtube.py',
+  'repo': 'soimort/you-get',
+  'sha': 'b746ac01c9f39de94cac2d56f665285b0523b974',
+  'url': 'https://github.com/soimort/you-get/blob/b746ac01c9f39de94cac2d56f665285b0523b974/src/you_get/extractors/youtube.py#L135-L143'
 }
 ```
 
@@ -278,45 +303,25 @@ The shell script `/script/setup` will automatically download these files into th
 
 The s3 links follow this pattern:
 
-> https://s3.amazonaws.com/code-search-net/CodeSearchNet/{python,java,csharp}/{train,valid,test,holdout}.zip
+> https://s3.amazonaws.com/code-search-net/CodeSearchNet/v2/{python,java,go,php,javascript,ruby}.zip
 
-For example, the link for the `java` validation partition is:
+For example, the link for the `java` is:
 
-> https://s3.amazonaws.com/code-search-net/CodeSearchNet/java/valid.zip
+> https://s3.amazonaws.com/code-search-net/CodeSearchNet/v2/java.zip
 
 The size of the pre-processed dataset is 1.8 GB.
 
-### Raw Data - Filtered
+### All functions (w/o comments)
 
-You may want to extract the data from source and parse, annotate, deduplicate, and partition the data yourself, instead of starting with our preprocessed version.  Instructions for this are in the [data extraction README](src/dataextraction/README.md).  This data consists of the csv file with two fields: **(1)** The full path (owner/repo/path) and **(2)** the raw string contents of the file. These csv files are filtered to only include paths only ending in relevant file extensions (`.py`, `.java`, or `.cs`). This data is located in the following S3 bucket:
+We also provide all functions (w/o comments), total ~6M functions. This data is located in the following S3 bucket:
 
-> https://s3.amazonaws.com/code-search-net/CodeSearchNet/{python,java,csharp}/raw/
+> https://s3.amazonaws.com/code-search-net/CodeSearchNet/v2/{python,java,go,php,javascript,ruby}_dedupe_definitions_v2.pkl
 
-Each bucket contains multi-part csv files, and there are a different number of csv files for each language.
+For example, the link for the python file is:
 
-Python (10 files): `000000000000.csv` to `000000000009.csv`
+> https://s3.amazonaws.com/code-search-net/CodeSearchNet/v2/python_dedupe_definitions_v2.pkl
 
-Java and CSharp (100 files each): `000000000000.csv` to `000000000099.csv`
-
-Note that Python only has 10 csv files, whereas Java and CSharp have 100 files each.  For example, the link for the first python file is:
-
-> https://s3.amazonaws.com/code-search-net/CodeSearchNet/python/raw/000000000000.csv
-
-The size of the raw filtered dataset is 42 GB.
-
-### Raw Data - Unfiltered
-
-The filtered version of the raw data does not contain the full contents of the open source repositories, only files with `.py`, `.java` or `.cs` extensions.  However, for documentation purposes it may be useful to refer back to the full contents of the repository so that all disclaimers and licenses can be viewed.  The format of this data is identical to the filtered raw data, except that it is not filtered by file extension.  These files are located in the following s3 bucket, and consist of 500 csv files:
-
-> https://s3.amazonaws.com/code-search-net/CodeSearchNet/all/
-
-`000000000000.csv` to `000000000499.csv`
-
-For example, the link for the first file is:
-
-> https://s3.amazonaws.com/code-search-net/CodeSearchNet/all/000000000000.csv
-
-The size of the raw unfiltered dataset is 424 GB.
+The size of the raw filtered dataset is 17 GB.
 
 # Related Projects
 

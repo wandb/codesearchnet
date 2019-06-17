@@ -19,13 +19,10 @@ if __name__ == '__main__':
     destination_dir = os.path.abspath(args['DESTINATION_DIR'])
     if not os.path.exists(destination_dir):
         os.makedirs(destination_dir)
+    os.chdir(destination_dir)
 
-    for language in ('python', 'csharp', 'java'):
-        for split in ('train', 'valid', 'test', 'holdout'):
-            language_dir = os.path.join(destination_dir, language, 'final', 'jsonl')
-            if not os.path.exists(language_dir):
-                os.makedirs(language_dir)
-            os.chdir(language_dir)
-            call(['wget', 'https://s3.amazonaws.com/code-search-net/CodeSearchNet/{}/{}.zip'.format(language, split), '-P', language_dir, '-O', '{}.zip'.format(split)])
-            call(['unzip', '{}.zip'.format(split)])
-            call(['rm', '{}.zip'.format(split)])
+    for language in ('python', 'javascript', 'java', 'ruby', 'php', 'go'):
+        call(['wget', 'https://s3.amazonaws.com/code-search-net/CodeSearchNet/v2/{}.zip'.format(language), '-P', destination_dir, '-O', '{}.zip'.format(language)])
+        call(['wget', 'https://s3.amazonaws.com/code-search-net/CodeSearchNet/v2/{}_dedupe_definitions_v2.pkl'.format(language), '-P', destination_dir, '-O', '{}_dedupe_definitions_v2.pkl'.format(language)])
+        call(['unzip', '{}.zip'.format(language)])
+        call(['rm', '{}.zip'.format(language)])

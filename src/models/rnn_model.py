@@ -12,7 +12,7 @@ class RNNModel(Model):
             hypers.update({f'{label}_{key}': value
                            for key, value in RNNEncoder.get_default_hyperparameters().items()})
         model_hypers = {
-            'code_use_subtokens': True,
+            'code_use_subtokens': False,
             'code_mark_subtoken_end': True,
             'batch_size': 1000
         }
