@@ -41,7 +41,7 @@ def load_predictions(filepath: str, max_urls_per_language: int=300) -> Dict[str,
     return predictions
 
 def coverage_per_language(language: str, predictions: Dict[str, Dict[str, List[str]]],
-                          relevance_scores: Dict[str, Dict[str, Dict[str, float]]]) -> float:
+                          relevance_scores: Dict[str, Dict[str, Dict[str, float]]], with_positive_relevance: bool=False) -> float:
     """
     Compute the % of annotated URLs that appear in the algorithm's predictions.
     """
@@ -49,10 +49,11 @@ def coverage_per_language(language: str, predictions: Dict[str, Dict[str, List[s
     num_covered = 0
     for query, url_data in relevance_scores[language].items():
         urls_in_predictions = set(predictions[language][query])
-        for url in url_data:
-            num_annotations += 1
-            if url in urls_in_predictions:
-                num_covered += 1
+        for url, relevance in url_data.items():
+            if not with_positive_relevance or relevance > 0:
+                num_annotations += 1
+                if url in urls_in_predictions:
+                    num_covered += 1
 
     return num_covered / num_annotations
 
@@ -93,6 +94,10 @@ def run(arguments):
     print('% of URLs in predictions that exist in the annotation dataset:')
     for language in languages_predicted:
         print(f'\t{language}: {coverage_per_language(language, predictions, relevance_scores)*100:.2f}%')
+
+    print('% of URLs in predictions that exist in the annotation dataset (avg relevance > 0):')
+    for language in languages_predicted:
+        print(f'\t{language}: {coverage_per_language(language, predictions, relevance_scores, with_positive_relevance=True) * 100:.2f}%')
 
     print('NDCG:')
     for language in languages_predicted:
