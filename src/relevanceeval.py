@@ -1,98 +1,107 @@
 #!/usr/bin/env python
 """
 Usage:
-    computerelevance.py [options] MODEL_PATH DATA_PATH TARGET_QUERIES OUTPUT_FILE
+    computerelevance.py [options] RELEVANCE_ANNOTATIONS_CSV_PATH MODEL_PREDICTIONS_CSV
 
 Standalone relevance evaluation script that outputs
 
 Options:
+    --debug                          Run in debug mode, falling into pdb on exceptions.
     -h --help                        Show this screen.
-    --distance-metric METRIC         The distance metric to use [default: cosine]
-    --batch-size <VAL>               The batch size to use [default: 200]
-    --quiet                          Less output (not one per line per minibatch). [default: False]
-    --dryrun                         Do not log run into logging database. [default: False]
-    --azure-info PATH                Azure authentication information file (JSON). Used to load data from Azure storage.
-    --sequential                     Do not parallelise data-loading. Simplifies debugging. [default: False]
-    --debug                          Enable debug routines. [default: False]
 """
 from collections import defaultdict
-from pathlib import Path
-from typing import List, Dict, Any
+from typing import Dict, List
 
 import numpy as np
+import pandas as pd
 from docopt import docopt
-from dpu_utils.utils import run_and_debug, RichPath
-from more_itertools import chunked
-from scipy.spatial.distance import cdist
+from dpu_utils.utils import run_and_debug
 
+def load_relevances(filepath: str) -> Dict[str, Dict[str, Dict[str, float]]]:
+    relevance_annotations = pd.read_csv(filepath)
+    per_query_language = relevance_annotations.pivot_table(index=['Query', 'Language', 'GitHubUrl'], values='Relevance', aggfunc=np.mean)
 
-import model_restore_helper
-import model_test as test
-from dataextraction.utils import tokenize_docstring_from_string
+    # Map language -> query -> url -> float
+    relevances = defaultdict(lambda: defaultdict(dict))  # type: Dict[str, Dict[str, Dict[str, float]]]
+    for (query, language, url), relevance in per_query_language['Relevance'].items():
+        relevances[language.lower()][query][url] = relevance
+    return relevances
+
+def load_predictions(filepath: str, max_urls_per_language: int=300) -> Dict[str, Dict[str, List[str]]]:
+    prediction_data = pd.read_csv(filepath)
+
+    # Map language -> query -> Ranked List of URL
+    predictions = defaultdict(lambda: defaultdict(list))
+    for _, row in prediction_data.iterrows():
+        predictions[row['language'].lower()][row['query']].append(row['url'])
+    for query_data in predictions.values():
+        for query, ranked_urls in query_data.items():
+            query_data[query] = ranked_urls[:max_urls_per_language]
+
+    return predictions
+
+def coverage_per_language(language: str, predictions: Dict[str, Dict[str, List[str]]],
+                          relevance_scores: Dict[str, Dict[str, Dict[str, float]]]) -> float:
+    """
+    Compute the % of annotated URLs that appear in the algorithm's predictions.
+    """
+    num_annotations = 0
+    num_covered = 0
+    for query, url_data in relevance_scores[language].items():
+        urls_in_predictions = set(predictions[language][query])
+        for url in url_data:
+            num_annotations += 1
+            if url in urls_in_predictions:
+                num_covered += 1
+
+    return num_covered / num_annotations
+
+def ndcg(predictions: Dict[str, List[str]], relevance_scores: Dict[str, Dict[str, float]],
+         ignore_rank_of_non_annotated_urls: bool=True) -> float:
+    num_results = 0
+    ndcg_sum = 0
+
+    for query, query_relevance_annotations in relevance_scores.items():
+        current_rank = 1
+        query_dcg = 0
+        for url in predictions[query]:
+            if url in query_relevance_annotations:
+                query_dcg += (2**query_relevance_annotations[url] - 1) / np.log2(current_rank + 1)
+                current_rank += 1
+            elif not ignore_rank_of_non_annotated_urls:
+                current_rank += 1
+
+        query_idcg = 0
+        for i, ideal_relevance in enumerate(sorted(query_relevance_annotations.values(), reverse=True), start=1):
+            query_idcg += (2 ** ideal_relevance - 1) / np.log2(i + 1)
+        if query_idcg == 0:
+            # We have no positive annotations for the given query, so we should probably not penalize anyone about this.
+            continue
+        num_results += 1
+        ndcg_sum += query_dcg / query_idcg
+    return ndcg_sum / num_results
+
 
 
 def run(arguments):
-    azure_info_path = arguments.get('--azure-info', None)
+    relevance_scores = load_relevances(arguments['RELEVANCE_ANNOTATIONS_CSV_PATH'])
+    predictions = load_predictions(arguments['MODEL_PREDICTIONS_CSV'])
 
-    model = model_restore_helper.restore(path=arguments['MODEL_PATH'],
-                                         is_train=False)
+    languages_predicted = sorted(set(predictions.keys()))
 
-    # Encode all queries
-    queries = []
-    for query in RichPath.create(arguments['TARGET_QUERIES'], azure_info_path).read_as_jsonl():
-        query['docstring_tokens'] = tokenize_docstring_from_string(query['query'])
-        queries.append(query)
+    # Now Compute the various evaluation results
+    print('% of URLs in predictions that exist in the annotation dataset:')
+    for language in languages_predicted:
+        print(f'\t{language}: {coverage_per_language(language, predictions, relevance_scores)*100:.2f}%')
 
-    queries = np.array(queries, dtype=np.object)
-    batched_data = chunked(queries, int(arguments['--batch-size']))
+    print('NDCG:')
+    for language in languages_predicted:
+        print(f'\t{language}: {ndcg(predictions[language], relevance_scores[language]):.3f}')
 
-    queries_per_lang = defaultdict(list)
-    for batch_data in batched_data:
-        query_representations = model.get_query_representations(batch_data)
-        assert len(batch_data) == len(query_representations)
-        for query, query_rep in zip(batch_data, query_representations):
-            queries_per_lang[query['language']].append({
-                'id': query['id'],
-                'representation': query_rep
-            })
+    print('NDCG (full ranking):')
+    for language in languages_predicted:
+        print(f'\t{language}: {ndcg(predictions[language], relevance_scores[language], ignore_rank_of_non_annotated_urls=False):.3f}')
 
-    # Encode all code
-    code_under_search = test.get_dataset_from([RichPath.create('DATA_PATH')])
-    code_under_search = np.array(code_under_search, dtype=np.object)
-    batched_data = chunked(code_under_search, int(arguments['--batch-size']))
-
-    code_per_lang = defaultdict(list)
-    for batch_data in batched_data:
-        code_representations = model.get_code_representations(batch_data)
-        assert len(batch_data) == len(code_representations)
-        for code, code_rep in zip(batch_data, code_representations):
-            code_per_lang[code['language']].append({
-                'url': code['url'],
-                'representation': code_rep
-            })
-
-    # Compute ranks and output
-
-    def flatten_representations(list_of_dict: List[Dict[str, Any]]) -> np.ndarray:
-        return np.stack(l['representation'] for l in list_of_dict)
-
-    def evaluation():
-        for language, queries in queries_per_lang.items():
-            query_representations = flatten_representations(queries)
-
-            candidate_snippets = code_per_lang[language]
-            code_representations = flatten_representations(candidate_snippets)
-
-            all_distances = cdist(query_representations, code_representations, metric=arguments['--distance-metric'])
-
-            ranked_results = np.argsort(all_distances, axis=-1)
-
-            for i in range(len(query_representations)):
-                yield {'id': queries[i]['id'],
-                        'ranked_results': [candidate_snippets[i][k] for k in ranked_results[i]]}
-
-    target_output_file = RichPath.create(arguments['OUTPUT_FILE'], azure_info_path)
-    target_output_file.save_as_compressed_file(evaluation())
 
 
 if __name__ == '__main__':
