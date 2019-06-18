@@ -1,9 +1,23 @@
 #!/usr/bin/env python
 """
 Usage:
-    computerelevance.py [options] RELEVANCE_ANNOTATIONS_CSV_PATH MODEL_PREDICTIONS_CSV
+    relevanceeval.py [options] RELEVANCE_ANNOTATIONS_CSV_PATH MODEL_PREDICTIONS_CSV
 
-Standalone relevance evaluation script that outputs
+Standalone relevance evaluation script that outputs evaluation statistics for a set of predictions of a given model.
+The input formats of the files is described below.
+
+The model predictions MODEL_PREDICTIONS_CSV file has the following format:
+    A comma-separated file with (at least) the fields and headers "language", "query", "url". Each row represents
+    a single result for a given query and a given programming language.
+
+    * language: the programming language for the given query, e.g. "python"
+    * query: the textual representation of the query, e.g. "int to string"
+    * url: the unique GitHub URL to the returned results, e.g. "https://github.com/JamesClonk/vultr/blob/fed59ad207c9bda0a5dfe4d18de53ccbb3d80c91/cmd/commands.go#L12-L190"
+
+     The order of the rows imply the ranking of the results in the search task. For example, if in row 5 there is
+     an entry for the Python query "read properties file" and then in row 60 appears another result for the
+     Python query "read properties file", then the URL in row 5 is considered to be ranked higher than the
+     URL in row 60 for that query and language.
 
 Options:
     --debug                          Run in debug mode, falling into pdb on exceptions.
@@ -19,12 +33,13 @@ from dpu_utils.utils import run_and_debug
 
 def load_relevances(filepath: str) -> Dict[str, Dict[str, Dict[str, float]]]:
     relevance_annotations = pd.read_csv(filepath)
-    per_query_language = relevance_annotations.pivot_table(index=['Query', 'Language', 'GitHubUrl'], values='Relevance', aggfunc=np.mean)
+    per_query_language = relevance_annotations.pivot_table(
+        index=['Query', 'Language', 'GitHubUrl'], values='Relevance', aggfunc=np.mean)
 
     # Map language -> query -> url -> float
     relevances = defaultdict(lambda: defaultdict(dict))  # type: Dict[str, Dict[str, Dict[str, float]]]
     for (query, language, url), relevance in per_query_language['Relevance'].items():
-        relevances[language.lower()][query][url] = relevance
+        relevances[language.lower()][query.lower()][url] = relevance
     return relevances
 
 def load_predictions(filepath: str, max_urls_per_language: int=300) -> Dict[str, Dict[str, List[str]]]:
@@ -33,22 +48,22 @@ def load_predictions(filepath: str, max_urls_per_language: int=300) -> Dict[str,
     # Map language -> query -> Ranked List of URL
     predictions = defaultdict(lambda: defaultdict(list))
     for _, row in prediction_data.iterrows():
-        predictions[row['language'].lower()][row['query']].append(row['url'])
+        predictions[row['language'].lower()][row['query'].lower()].append(row['url'])
     for query_data in predictions.values():
         for query, ranked_urls in query_data.items():
             query_data[query] = ranked_urls[:max_urls_per_language]
 
     return predictions
 
-def coverage_per_language(language: str, predictions: Dict[str, Dict[str, List[str]]],
-                          relevance_scores: Dict[str, Dict[str, Dict[str, float]]], with_positive_relevance: bool=False) -> float:
+def coverage_per_language(predictions: Dict[str, List[str]],
+                          relevance_scores: Dict[str, Dict[str, float]], with_positive_relevance: bool=False) -> float:
     """
     Compute the % of annotated URLs that appear in the algorithm's predictions.
     """
     num_annotations = 0
     num_covered = 0
-    for query, url_data in relevance_scores[language].items():
-        urls_in_predictions = set(predictions[language][query])
+    for query, url_data in relevance_scores.items():
+        urls_in_predictions = set(predictions[query])
         for url, relevance in url_data.items():
             if not with_positive_relevance or relevance > 0:
                 num_annotations += 1
@@ -93,11 +108,11 @@ def run(arguments):
     # Now Compute the various evaluation results
     print('% of URLs in predictions that exist in the annotation dataset:')
     for language in languages_predicted:
-        print(f'\t{language}: {coverage_per_language(language, predictions, relevance_scores)*100:.2f}%')
+        print(f'\t{language}: {coverage_per_language(predictions[language], relevance_scores[language])*100:.2f}%')
 
     print('% of URLs in predictions that exist in the annotation dataset (avg relevance > 0):')
     for language in languages_predicted:
-        print(f'\t{language}: {coverage_per_language(language, predictions, relevance_scores, with_positive_relevance=True) * 100:.2f}%')
+        print(f'\t{language}: {coverage_per_language(predictions[language], relevance_scores[language], with_positive_relevance=True) * 100:.2f}%')
 
     print('NDCG:')
     for language in languages_predicted:
