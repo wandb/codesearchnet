@@ -25,20 +25,16 @@ from docopt import docopt
 from dpu_utils.utils import RichPath, run_and_debug
 from tqdm import tqdm
 
+from dataextraction.utils import tokenize_docstring_from_string
 from utils.pkldf2jsonl import chunked_save_df_to_jsonl
 
 
 IS_WHITESPACE_REGEX = re.compile(r'\s+')
-DOCSTRING_REGEX_TOKENIZER = re.compile(r"[^\s,'\"`.():\[\]=*;>{\}+-/\\]+|\\+|\.+|\(\)|{\}|\[\]|\(+|\)+|:+|\[+|\]+|{+|\}+|=+|\*+|;+|>+|\++|-+|/+")
 
 
 class ParsedCode(NamedTuple):
     code_tokens: List[str]
     comment_tokens: List[str]
-
-
-def tokenize_docstring_from_string(docstr: str) -> List[str]:
-    return [t for t in DOCSTRING_REGEX_TOKENIZER.findall(docstr) if t is not None and len(t) > 0]
 
 
 def tokenize_python_from_string(code: str,

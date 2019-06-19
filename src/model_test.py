@@ -13,7 +13,8 @@ import wandb
 
 import model_restore_helper
 from models.model import get_data_files_from_directory, Model
-from dataextraction.python.parse_python_data import tokenize_docstring_from_string, tokenize_python_from_string
+from dataextraction.python.parse_python_data import tokenize_python_from_string
+from dataextraction.utils import tokenize_docstring_from_string
 from dpu_utils.codeutils import split_identifier_into_parts
 
 
